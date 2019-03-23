@@ -34,7 +34,20 @@ public class GameManagement {
     public void startGame() {
         bettingTurn();
         chooseFellow();
-        players = rotate(players,(startingPlayer));
+        playPhase();
+    }
+
+    private void playPhase() {
+        rotate(players,(startingPlayer));
+        int hands = 0;
+        while (hands!=8) {
+            Table table = new Table(briscola);
+            for(int i = 0; i < 5;i++) {
+                table.addCard(players.get(i).pickACard(), players.get(i));
+            }
+            players.get(table.getWinner()).winHand(table.getCards());
+            hands++;
+        }
     }
 
     private void chooseFellow() {

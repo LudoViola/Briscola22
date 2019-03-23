@@ -7,23 +7,39 @@ import java.util.ArrayList;
 
 public class Table {
     private ArrayList<Card> cards;
+    private ArrayList<Card> briscolas;
     private boolean isFirst = true;
     private Semi semeDiTurno;
     private int winner;
     private Card winningCard;
+    private Semi briscola;
 
-    public Table() {
+    public Table(Semi briscola) {
         this.cards = new ArrayList<>();
+        this.briscola = briscola;
     }
 
     public void addCard(Card card, Player player) {
         if(isFirst) {
             semeDiTurno = card.getSeme();
             tempWinner(card, player);
+            isFirst = false;
         }
         else {
-            if(card.getSeme() == semeDiTurno && card.isGreaterStessoSeme(winningCard)) {
-                tempWinner(card, player);
+            if(semeDiTurno == briscola && card.isGreaterStessoSeme(winningCard)) {
+                tempWinner(card,player);
+            }
+            else {
+                if (card.getSeme() == semeDiTurno && card.isGreaterStessoSeme(winningCard)) {
+                    tempWinner(card, player);
+                }
+                else if(card.getSeme() == briscola && winningCard.getSeme()!=briscola) {
+                    semeDiTurno = briscola;
+                    tempWinner(card,player);
+                }
+                else {
+                    this.cards.add(card);
+                }
             }
         }
     }
@@ -34,7 +50,11 @@ public class Table {
         this.cards.add(card);
     }
 
-    public void checkWinner() {
+    public ArrayList<Card> getCards() {
+        return cards;
+    }
 
+    public int getWinner() {
+        return winner;
     }
 }
