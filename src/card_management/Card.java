@@ -3,7 +3,6 @@ package card_management;
 public class Card {
     private Semi seme;
     private int valore;
-    private int resId;
 
     public Card(Semi seme, int valore) {
         this.seme = seme;
@@ -16,14 +15,6 @@ public class Card {
                 "seme=" + seme +
                 ", valore=" + valore +
                 '}';
-    }
-
-    public void setResId(int resId) {
-        this.resId = resId;
-    }
-
-    public int getResId() {
-        return resId;
     }
 
     public int getValore() {
@@ -47,5 +38,13 @@ public class Card {
         else {
             return false;
         }
+    }
+
+     @Override
+    public boolean equals(Object obj) {
+        if (getClass() != obj.getClass())
+            return false;
+        Card card = (Card) obj;
+       return (this.valore == card.valore && this.seme == card.seme);
     }
 }

@@ -21,11 +21,15 @@ public class Player {
     @Override
     public String toString() {
         return "Player{"  + order +
-                ", hand=" + hand +
-                '}';
+                "\nhand=" + hand +
+                "}\n";
     }
 
     public int getOrder() {
         return order;
+    }
+
+    public Hand getHand() {
+        return hand;
     }
 }
