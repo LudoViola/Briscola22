@@ -35,6 +35,17 @@ public class GameManagement {
         bettingTurn();
         chooseFellow();
         playPhase();
+        makeScoreBoard();
+    }
+
+    private void makeScoreBoard() {
+        ArrayList<Player> scoreOrder = new ArrayList<>(players);
+        scoreOrder.sort(Player::compareTo);
+        int i = 1;
+        for (Player p: scoreOrder) {
+            System.out.println(i +". Player: " + p.getOrder()+" Score: " + p.getScore());
+            i++;
+        }
     }
 
     private void playPhase() {
@@ -45,7 +56,9 @@ public class GameManagement {
             for(int i = 0; i < 5;i++) {
                 table.addCard(players.get(i).pickACard(), players.get(i));
             }
+
             players.get(table.getWinner()).winHand(table.getCards());
+            makeScoreBoard();
             hands++;
         }
     }

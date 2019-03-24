@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Table {
     private ArrayList<Card> cards;
     private ArrayList<Card> briscolas;
-    private boolean isFirst = true;
+    private boolean isFirst;
     private Semi semeDiTurno;
     private int winner;
     private Card winningCard;
@@ -17,6 +17,7 @@ public class Table {
     public Table(Semi briscola) {
         this.cards = new ArrayList<>();
         this.briscola = briscola;
+        isFirst = true;
     }
 
     public void addCard(Card card, Player player) {
@@ -26,17 +27,18 @@ public class Table {
             isFirst = false;
         }
         else {
-            if(semeDiTurno == briscola && card.isGreaterStessoSeme(winningCard)) {
+            if(semeDiTurno == briscola && card.getSeme() == briscola && card.isGreaterStessoSeme(winningCard)) {
                 tempWinner(card,player);
             }
             else {
-                if (card.getSeme() == semeDiTurno && card.isGreaterStessoSeme(winningCard)) {
+                if(card.getSeme() == briscola && winningCard.getSeme()!=briscola) {
+                semeDiTurno = briscola;
+                tempWinner(card,player);
+            }
+                else if (card.getSeme() == semeDiTurno && card.isGreaterStessoSeme(winningCard)) {
                     tempWinner(card, player);
                 }
-                else if(card.getSeme() == briscola && winningCard.getSeme()!=briscola) {
-                    semeDiTurno = briscola;
-                    tempWinner(card,player);
-                }
+
                 else {
                     this.cards.add(card);
                 }

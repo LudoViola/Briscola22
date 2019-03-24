@@ -5,15 +5,17 @@ import card_management.Card;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Player {
+public class Player implements Comparable<Player> {
     private int order;
     private Hand hand;
     private ArrayList<Card> wonCards;
+    private int score;
 
     public Player(int order) {
         this.order = order;
         this.wonCards = new ArrayList<>();
         this.hand = new Hand();
+        this.score = 0;
     }
     public  void draw(Card card) {
         this.hand.draw(card);
@@ -59,5 +61,17 @@ public class Player {
 
     public void winHand(ArrayList<Card> cards) {
         this.wonCards.addAll(cards);
+        for (Card c:cards) {
+            this.score += c.getPoints();
+        }
+    }
+
+    @Override
+    public int compareTo(Player o) {
+        return Integer.compare(o.score, this.score);
+    }
+
+    public int getScore() {
+        return score;
     }
 }
