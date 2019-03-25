@@ -1,9 +1,13 @@
 package card_management;
 
+
+import java.awt.*;
+
 public class Card {
     private Semi seme;
     private int valore;
     private int points;
+    private Image cardImage;
 
     public Card(Semi seme, int valore) {
         this.seme = seme;
@@ -75,5 +79,13 @@ public class Card {
 
     public int getPoints() {
         return points;
+    }
+
+    public void setCardImage(Image cardImage) {
+        this.cardImage = cardImage;
+    }
+
+    public Image getCardImage() {
+        return cardImage;
     }
 }

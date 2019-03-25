@@ -1,5 +1,6 @@
 package game;
 
+import GUI.RealPlayerScreen;
 import card_management.Card;
 import card_management.Deck;
 import card_management.Semi;
@@ -16,11 +17,33 @@ public class GameManagement {
     private Semi briscola;
     private Card fellowCard;
     private int startingPlayer;
+    private int currentPlayer;
+    private int higherBet;
+    private int currentBet;
+    private CopyOnWriteArrayList<Player> bettingPlayers;
+    private boolean betAnswer;
+    private RealPlayerScreen screen;
+    private final Object lock;
+    private boolean isFirst;
 
-    public GameManagement(Deck deck) {
+    public GameManagement() {
         this.players = new ArrayList<>();
-        this.deck = deck;
+        this.deck = new Deck();
+        this.deck.shuffle();
         generatePlayers();
+        distributeCard();
+        bettingPlayers = new CopyOnWriteArrayList<>(players);
+        higherBet = 0;
+        startingPlayer = 0;
+        currentPlayer = 0;
+        isFirst = true;
+
+
+        this.lock = new Object();
+
+        this.screen = new RealPlayerScreen(players.get(0), lock);
+        this.screen.setVisible(true);
+
     }
 
     public void distributeCard() {
@@ -32,11 +55,14 @@ public class GameManagement {
     }
 
     public void startGame() {
+        betAnswer = false;
         bettingTurn();
         chooseFellow();
         playPhase();
         makeScoreBoard();
     }
+
+
 
     private void makeScoreBoard() {
         ArrayList<Player> scoreOrder = new ArrayList<>(players);
@@ -110,34 +136,49 @@ public class GameManagement {
         System.out.println("FellowCard " + fellowCard + "briscola: " + briscola);
     }
 
-    private void bettingTurn() {
-
-        int higherBet = 0;
-        startingPlayer = 0;
-        CopyOnWriteArrayList<Player> bettingPlayers = new CopyOnWriteArrayList<>(players);
+    public void bettingTurn() {
         while (bettingPlayers.size()!=1) {
             for (Player p : bettingPlayers) {
-                    System.out.println("Player number: " + p.getOrder() + "\nChose points bet from 61 to 120,0 to pass");
-                    System.out.println("Bet to beat: " + higherBet);
-                    scanner = new Scanner(System.in);
-                    int bet = scanner.nextInt();
-                    if (bet > 60 && bet < 121) {
-                        if (bet > higherBet) {
-                            higherBet = bet;
-                            startingPlayer = p.getOrder();
-                        } else {
-                            System.out.println("Bet to beat: " + higherBet);
-                            System.out.println("Chose again or pass");
+                screen.setCurrentPlayer(p);
+                if(p.getOrder()==0 && isFirst) {
+
+                }
+                else {
+                    screen.updatePlayerCards(p);
+                }
+                screen.setLabelText(p.getOrder());
+                System.out.println(p.getHand());
+
+                synchronized (lock) {
+                    while (!screen.isBetDone()) {
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
-                    } else if (bet == 0) {
-                        bettingPlayers.remove(p);
-                    } else {
-                        System.out.println("Chose again or pass");
                     }
+                }
+                //screen.updatePlayerCards(p);
+                System.out.println("here");
+                int bet = screen.getBet();
+                if (bet > 60 && bet < 121) {
+                    if (bet > higherBet) {
+                        higherBet = bet;
+                        startingPlayer = p.getOrder();
+                    }
+                }
+                 else if (bet == 0) {
+                    bettingPlayers.remove(p);
+                }
+                screen.setBetDone(false);
+                 if(bettingPlayers.size()== 0) {
+                     bettingPlayers.add(new Player(6));
+                 }
+                 isFirst = false;
             }
         }
-        System.out.println("Starting player " + startingPlayer + "with bet: " + higherBet);
-
+            String s = ("Starting player " + startingPlayer + "with bet: " + higherBet);
+            screen.diplayBettingWinner(s);
     }
 
     private void generatePlayers() {
@@ -169,5 +210,29 @@ public class GameManagement {
         }
 
         return aL;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public Deck getDeck() {
+        return deck;
+    }
+
+    public Semi getBriscola() {
+        return briscola;
+    }
+
+    public Card getFellowCard() {
+        return fellowCard;
+    }
+
+    public int getStartingPlayer() {
+        return startingPlayer;
+    }
+
+    public int getHigherBet() {
+        return higherBet;
     }
 }

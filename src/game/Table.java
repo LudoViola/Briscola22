@@ -2,6 +2,8 @@ package game;
 
 import card_management.Card;
 import card_management.Semi;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 
 import java.util.ArrayList;
 
