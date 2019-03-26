@@ -1,5 +1,6 @@
 package GUI.frames;
 
+import GUI.buttons.ButtonCardImage;
 import GUI.panels.PanelTurnPlayerCards;
 import game.Player;
 
@@ -17,10 +18,13 @@ public class BettingTurnScreen extends JFrame implements ActionListener {
     private JLabel playerName;
     private JButton buttonBet;
     private boolean betDone;
+    private boolean turnDone;
+    private boolean listenerEnabled;
     private int bet;
     private JButton buttonPass;
     private JSpinner betSpinner;
     private final Object lock;
+    private String imageString;
 
     public BettingTurnScreen(Player firstPlayer, Object lock) throws HeadlessException {
 
@@ -86,34 +90,27 @@ public class BettingTurnScreen extends JFrame implements ActionListener {
         add(backgroundPanel);
 
         betDone = false;
+        turnDone = false;
+        listenerEnabled = false;
         bet = 0;
         this.lock = lock;
 
-/*
-
-
-        JPanel table = new JPanel();
-        table.setSize(900,400);
-        table.setBackground(Color.GREEN);
-
-        JPanel zone2 = new JPanel();
-        zone2.setSize(900,300);
-        zone2.setBackground(Color.BLACK);
-
-        add(zone1);
-        add(table);
-        add(zone2);
-        */
     }
 
     public void diplayBettingWinner(String s) {
         JOptionPane.showMessageDialog(this,s,"The Winner", JOptionPane.INFORMATION_MESSAGE);
+    }
+    public void diplayScoreBoard( String s) {
+        JOptionPane.showMessageDialog(this,s,"Classifica", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void updatePlayerCards(Player player) {
         cardsContainer.update(player.getHand());
         revalidate();
         repaint();
+        if(listenerEnabled) {
+            setActionListener();
+        }
     }
 
     public void setCurrentPlayer(Player currentPlayer) {
@@ -124,12 +121,28 @@ public class BettingTurnScreen extends JFrame implements ActionListener {
         return betDone;
     }
 
+    public boolean isTurnDone() {
+        return turnDone;
+    }
+
+    public void setTurnDone(boolean turnDone) {
+        this.turnDone = turnDone;
+    }
+
     public void setBetDone(boolean betDone) {
         this.betDone = betDone;
     }
 
+    public void setListenerEnabled(boolean listenerEnabled) {
+        this.listenerEnabled = listenerEnabled;
+    }
+
     public int getBet() {
         return bet;
+    }
+
+    public String getImageString() {
+        return imageString;
     }
 
     @Override
@@ -148,9 +161,26 @@ public class BettingTurnScreen extends JFrame implements ActionListener {
                 lock.notifyAll();
             }
         }
+        else if(e.getSource() instanceof ButtonCardImage) {
+            imageString = e.getActionCommand();
+            synchronized (lock) {
+                turnDone = true;
+                lock.notifyAll();
+            }
+        }
     }
 
     public void setLabelText(int order) {
         playerName.setText("Player" + order);
+    }
+
+    public void setBetAreaVisibility(boolean b) {
+        buttonBet.setVisible(b);
+        buttonPass.setVisible(b);
+        betSpinner.setVisible(b);
+    }
+
+    public void setActionListener() {
+        cardsContainer.setActionListener(this);
     }
 }

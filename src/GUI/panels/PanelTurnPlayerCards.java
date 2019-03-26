@@ -5,6 +5,7 @@ import game.Hand;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class PanelTurnPlayerCards {
@@ -41,5 +42,11 @@ public class PanelTurnPlayerCards {
 
     public JPanel getPanel() {
         return panel;
+    }
+
+    public void setActionListener(ActionListener listener) {
+        for (PanelTurningCard p:cardsSlot) {
+            p.setActionListener(listener);
+        }
     }
 }

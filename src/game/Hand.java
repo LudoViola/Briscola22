@@ -4,6 +4,7 @@ import card_management.Card;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Hand {
@@ -17,9 +18,14 @@ public class Hand {
         this.cards.add(card);
     }
 
-    Card chooseCard(int choose) {
-        Card card = this.cards.get(choose);
-        this.cards.remove(choose);
+    Card chooseCard(String string) {
+        Card card = null;
+        for (Card c:cards) {
+            if(c.getCardImage().toString().equals(string)) {
+                card = c;
+            }
+        }
+        this.cards.remove(card);
         return card;
     }
 

@@ -6,6 +6,7 @@ import card_management.Card;
 import card_management.Deck;
 import card_management.Semi;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -13,14 +14,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameManagement {
     private ArrayList<Player> players;
+    private ArrayList<Player> teamCaller;
+    private ArrayList<Player> teamPopolo;
     private Deck deck;
-    private Scanner scanner;
     private Semi briscola;
     private Card fellowCard;
     private int startingPlayer;
-    private int currentPlayer;
     private int higherBet;
-    private int currentBet;
     private CopyOnWriteArrayList<Player> bettingPlayers;
     private boolean betAnswer;
     private BettingTurnScreen screen;
@@ -38,7 +38,6 @@ public class GameManagement {
         bettingPlayers = new CopyOnWriteArrayList<>(players);
         higherBet = 0;
         startingPlayer = 0;
-        currentPlayer = 0;
         isFirst = true;
 
 
@@ -67,29 +66,53 @@ public class GameManagement {
 
 
 
-    private void makeScoreBoard() {
+    private String makeScoreBoard() {
         ArrayList<Player> scoreOrder = new ArrayList<>(players);
         scoreOrder.sort(Player::compareTo);
         int i = 1;
+        String s = "";
         for (Player p: scoreOrder) {
-            System.out.println(i +". Player: " + p.getOrder()+" Score: " + p.getScore());
+            s+=("\n" + i + ". Player: " + p.getOrder() + " Score: " + p.getScore());
             i++;
         }
+
+        return s;
     }
 
     private void playPhase() {
-        rotate(players,(startingPlayer));
-        int hands = 0;
-        while (hands!=8) {
-            Table table = new Table(briscola);
-            for(int i = 0; i < 5;i++) {
-                table.addCard(players.get(i).pickACard(), players.get(i));
-            }
 
-            players.get(table.getWinner()).winHand(table.getCards());
-            makeScoreBoard();
+        int hands = 0;
+
+        while(hands!=8) {
+            Table table = new Table(briscola);
+            for (Player p:players) {
+
+                switchScreen(p);
+                synchronized (lock) {
+                    while (!screen.isTurnDone()) {
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                table.addCard(p.pickACard(screen.getImageString()), p);
+                screen.setTurnDone(false);
+            }
             hands++;
+            players.get(table.getWinner()).winHand(table.getCards());
         }
+        screen.diplayScoreBoard(makeScoreBoard());
+        screen.dispose();
+    }
+
+    private void switchScreen(Player p) {
+        screen.setCurrentPlayer(p);
+        if (p.getOrder() != 0 || !isFirst) {
+            screen.updatePlayerCards(p);
+        }
+        screen.setLabelText(p.getOrder());
     }
 
     private void chooseFellow() {
@@ -111,25 +134,23 @@ public class GameManagement {
         briscola = fellowCard.getSeme();
         System.out.println(fellowCard);
 
+        screen.setListenerEnabled(true);
+
         screen.updatePlayerCards(players.get(0));
         screen.setLabelText(players.get(0).getOrder());
         screen.update(screen.getGraphics());
         screen.revalidate();
         screen.repaint();
 
+        createTeams();
+        screen.setBetAreaVisibility(false);
+
     }
 
     public void bettingTurn() {
         while (bettingPlayers.size()!=1) {
             for (Player p : bettingPlayers) {
-                screen.setCurrentPlayer(p);
-                if(p.getOrder()==0 && isFirst) {
-
-                }
-                else {
-                    screen.updatePlayerCards(p);
-                }
-                screen.setLabelText(p.getOrder());
+                switchScreen(p);
 
                 synchronized (lock) {
                     while (!screen.isBetDone()) {
@@ -192,27 +213,25 @@ public class GameManagement {
         return aL;
     }
 
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
-
     public Deck getDeck() {
         return deck;
     }
 
-    public Semi getBriscola() {
-        return briscola;
+    private void createTeams() {
+        this.teamCaller = new ArrayList<>();
+        this.teamPopolo = new ArrayList<>();
+
+        for (Player p:players) {
+            if(p.getOrder() == 0) {
+                teamCaller.add(p);
+            }
+            else if(p.getHand().getCards().contains(fellowCard)) {
+                teamCaller.add(p);
+            }
+            else {
+                teamPopolo.add(p);
+            }
+        }
     }
 
-    public Card getFellowCard() {
-        return fellowCard;
-    }
-
-    public int getStartingPlayer() {
-        return startingPlayer;
-    }
-
-    public int getHigherBet() {
-        return higherBet;
-    }
 }

@@ -2,6 +2,7 @@ package game;
 
 import card_management.Card;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -21,8 +22,8 @@ public class Player implements Comparable<Player> {
         this.hand.draw(card);
     }
 
-    public Card chooseCard(int choose) {
-        return this.hand.chooseCard(choose);
+    public Card chooseCard(String image) {
+        return this.hand.chooseCard(image);
     }
 
     @Override
@@ -40,23 +41,9 @@ public class Player implements Comparable<Player> {
         return hand;
     }
 
-    public Card pickACard() {
-        int i = 0;
-        System.out.println("Player " + order );
-        System.out.println("Pick a card");
-        for (Card c:hand.getCards()) {
-            System.out.print("[" + i + "]" + c + " ");
-            i++;
-        }
-        System.out.print("\n");
-        Scanner scanner = new Scanner(System.in);
-        int scelta = scanner.nextInt();
-        if(scelta >= 0 && scelta < hand.getCards().size()) {
-            return chooseCard(scelta);
-        }
-        else {
-            return null;
-        }
+    public Card pickACard(String string) {
+            return chooseCard(string);
+
     }
 
     public void winHand(ArrayList<Card> cards) {
