@@ -1,6 +1,7 @@
 package game;
 
-import GUI.RealPlayerScreen;
+import GUI.frames.ChoseFellowScreen;
+import GUI.frames.BettingTurnScreen;
 import card_management.Card;
 import card_management.Deck;
 import card_management.Semi;
@@ -22,14 +23,16 @@ public class GameManagement {
     private int currentBet;
     private CopyOnWriteArrayList<Player> bettingPlayers;
     private boolean betAnswer;
-    private RealPlayerScreen screen;
+    private BettingTurnScreen screen;
     private final Object lock;
     private boolean isFirst;
+    private Deck deckCopy;
 
     public GameManagement() {
         this.players = new ArrayList<>();
         this.deck = new Deck();
         this.deck.shuffle();
+        this.deckCopy =deck;
         generatePlayers();
         distributeCard();
         bettingPlayers = new CopyOnWriteArrayList<>(players);
@@ -41,7 +44,7 @@ public class GameManagement {
 
         this.lock = new Object();
 
-        this.screen = new RealPlayerScreen(players.get(0), lock);
+        this.screen = new BettingTurnScreen(players.get(0), lock);
         this.screen.setVisible(true);
 
     }
@@ -90,50 +93,30 @@ public class GameManagement {
     }
 
     private void chooseFellow() {
-        boolean check = true;
-        while(check) {
-            System.out.println("Player"+ startingPlayer + " : Choose your Fellow");
-            System.out.println("[0]COPPE\n[1]DENARI\n[2]BASTONI\n[3]SPADE\n");
-            scanner = new Scanner(System.in);
-            int semeScelto = scanner.nextInt();
-            if (semeScelto < 4 && semeScelto >= 0) {
-                for (Semi s : Semi.values()) {
-                    if (s.ordinal() == semeScelto) {
-                        briscola = s;
-                        check = false;
-                    }
-                }
-            } else {
-                System.out.println("Invalid choice");
-            }
-        }
-        while (!check) {
-            System.out.println("Choose now card value, from 1 to 10");
-            scanner = new Scanner(System.in);
-            int valoreScelto = scanner.nextInt();
-            if(valoreScelto>0 && valoreScelto<11) {
-                fellowCard = new Card(briscola,valoreScelto);
-                boolean check1 = true;
-                for (Card c:players.get(startingPlayer).getHand().getCards()) {
-                    if(fellowCard.equals(c)) {
-                        check1 = false;
-                    }
-                }
+        rotate(players,startingPlayer);
+        ChoseFellowScreen screen1 = new ChoseFellowScreen(players.get(0),lock);
+        screen1.setVisible(true);
 
-                if (check1) {
-                    check = true;
+        synchronized (lock) {
+            while (!screen1.isFellowChosen()) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                else {
-                    System.out.println("Invalid choice, choose again");
-                    fellowCard = null;
-                }
-            }
-            else {
-                System.out.println("Invalid choice, choose again");
             }
         }
 
-        System.out.println("FellowCard " + fellowCard + "briscola: " + briscola);
+        fellowCard = screen1.getCardChosen();
+        briscola = fellowCard.getSeme();
+        System.out.println(fellowCard);
+
+        screen.updatePlayerCards(players.get(0));
+        screen.setLabelText(players.get(0).getOrder());
+        screen.update(screen.getGraphics());
+        screen.revalidate();
+        screen.repaint();
+
     }
 
     public void bettingTurn() {
@@ -147,7 +130,6 @@ public class GameManagement {
                     screen.updatePlayerCards(p);
                 }
                 screen.setLabelText(p.getOrder());
-                System.out.println(p.getHand());
 
                 synchronized (lock) {
                     while (!screen.isBetDone()) {
@@ -158,8 +140,6 @@ public class GameManagement {
                         }
                     }
                 }
-                //screen.updatePlayerCards(p);
-                System.out.println("here");
                 int bet = screen.getBet();
                 if (bet > 60 && bet < 121) {
                     if (bet > higherBet) {

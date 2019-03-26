@@ -1,29 +1,28 @@
-package GUI;
+package GUI.frames;
 
-import game.GameManagement;
+import GUI.panels.PanelTurnPlayerCards;
 import game.Player;
-import game.Table;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class RealPlayerScreen extends JFrame implements ActionListener {
+public class BettingTurnScreen extends JFrame implements ActionListener {
 
-    JPanel backgroundPanel;
-    JPanel playerCardZone;
-    PanelTurnPlayerCards cardsContainer;
-    Player currentPlayer;
-    JLabel playerName;
-    JButton buttonBet;
+    private JPanel backgroundPanel;
+    private JPanel playerCardZone;
+    private PanelTurnPlayerCards cardsContainer;
+    private Player currentPlayer;
+    private JLabel playerName;
+    private JButton buttonBet;
     private boolean betDone;
     private int bet;
     private JButton buttonPass;
     private JSpinner betSpinner;
     private final Object lock;
 
-    public RealPlayerScreen(Player firstPlayer, Object lock) throws HeadlessException {
+    public BettingTurnScreen(Player firstPlayer, Object lock) throws HeadlessException {
 
         setTitle("Briscola in 5");
         setSize(1000,800);
@@ -76,7 +75,7 @@ public class RealPlayerScreen extends JFrame implements ActionListener {
         menuZone.setBackground(Color.BLACK);
 
         cardsContainer = new PanelTurnPlayerCards(firstPlayer.getHand());
-        playerCardZone.add(cardsContainer);
+        playerCardZone.add(cardsContainer.getPanel());
 
         backgroundPanel.add(menuZone, BorderLayout.PAGE_START);
         backgroundPanel.add(table,BorderLayout.CENTER);
@@ -113,6 +112,8 @@ public class RealPlayerScreen extends JFrame implements ActionListener {
 
     public void updatePlayerCards(Player player) {
         cardsContainer.update(player.getHand());
+        revalidate();
+        repaint();
     }
 
     public void setCurrentPlayer(Player currentPlayer) {

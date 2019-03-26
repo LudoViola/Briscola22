@@ -71,4 +71,7 @@ public class Deck {
         return deck;
     }
 
+    public void setDeck(ArrayList<Card> deck) {
+        this.deck = deck;
+    }
 }

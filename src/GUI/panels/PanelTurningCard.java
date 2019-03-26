@@ -1,23 +1,26 @@
-package GUI;
+package GUI.panels;
+
+import GUI.buttons.ButtonCardImage;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
-public class PanelTurningCard extends JPanel implements ActionListener {
+public class PanelTurningCard extends JPanel {
 
     Image image;
     CardLayout cardLayout;
+    ButtonCardImage buttonCardImageUp;
+
 
     public PanelTurningCard(Image image) {
         cardLayout = new CardLayout();
         setLayout(cardLayout);
-        ButtonCardImage buttonCardImageUp = new ButtonCardImage(image);
+        buttonCardImageUp = new ButtonCardImage(image);
 
         URL resource = getClass().getClassLoader().getResource( "card_images/retro.png" );
         BufferedImage body = null;
@@ -34,9 +37,8 @@ public class PanelTurningCard extends JPanel implements ActionListener {
         add(buttonCardImageDown);
 
     }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        cardLayout.next(this);
+    public void setActionListener(ActionListener listener) {
+        buttonCardImageUp.setActionListener(listener);
     }
+
 }

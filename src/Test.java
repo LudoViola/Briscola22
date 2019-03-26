@@ -1,6 +1,4 @@
-import GUI.RealPlayerScreen;
 import game.GameManagement;
-import game.Player;
 
 public class Test {
     public static void main(String[] args) {
