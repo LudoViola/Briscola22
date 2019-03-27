@@ -6,6 +6,7 @@ import javafx.scene.Node;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Hand {
     private ArrayList<Card> cards;
@@ -14,8 +15,9 @@ public class Hand {
         this.cards = new ArrayList<>();
     }
 
-    void draw(Card card) {
-        this.cards.add(card);
+    void draw(Card card)
+    {
+            this.cards.add(card);
     }
 
     public Hand(ArrayList<Card> cards) {

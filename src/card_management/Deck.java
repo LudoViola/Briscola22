@@ -26,6 +26,8 @@ public class Deck {
         int factor = 0;
         for(Semi s: Semi.values()) {
             for(int i = 1; i < 11; i++) {
+
+
                 Card card = new Card(s,i);
                 URL resource;
                 if(s == Semi.COPPE) {
@@ -39,6 +41,46 @@ public class Deck {
             }
             factor +=10;
 
+        }
+        addValore();
+    }
+
+    public void addValore() {
+        for (Card c:deck) {
+            Valore valore = null;
+            switch (c.getValore()) {
+                case 1:
+                    valore = Valore.ACE;
+                   break;
+                case 2:
+                    valore = Valore.TWO;
+                    break;
+                case 3:
+                    valore = Valore.THREE;
+                    break;
+                case 4:
+                    valore = Valore.FOUR;
+                    break;
+                case 5:
+                    valore = Valore.FIVE;
+                    break;
+                case 6:
+                    valore = Valore.SIX;
+                    break;
+                case 7:
+                    valore = Valore.SEVEN;
+                    break;
+                case 8:
+                    valore = Valore.EIGHT;
+                    break;
+                case 9:
+                    valore = Valore.NINE;
+                    break;
+                case 10:
+                    valore = Valore.TEN;
+                    break;
+            }
+            c.setValue(valore);
         }
     }
 
@@ -65,6 +107,7 @@ public class Deck {
     }
 
     public void setDeck(ArrayList<Card> deck) {
+        this.deck.clear();
         this.deck = deck;
     }
 }

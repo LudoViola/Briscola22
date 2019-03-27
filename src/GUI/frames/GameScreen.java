@@ -34,6 +34,7 @@ public class GameScreen extends JFrame implements ActionListener {
     private final Object lock;
     private String imageString;
     private Table table;
+    private int higherBet;
 
 
     public GameScreen(Player firstPlayer, Object lock) throws HeadlessException {
@@ -185,6 +186,10 @@ public class GameScreen extends JFrame implements ActionListener {
         return bet;
     }
 
+    public void setHigherBet(int higherBet) {
+        this.higherBet = higherBet;
+    }
+
     public String getImageString() {
         return imageString;
     }
@@ -193,9 +198,11 @@ public class GameScreen extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == buttonBet) {
             bet = (Integer) betSpinner.getValue();
-            synchronized (lock) {
-                betDone = true;
-                lock.notifyAll();
+            if(bet > higherBet) {
+                synchronized (lock) {
+                    betDone = true;
+                    lock.notifyAll();
+                }
             }
         }
         else if(e.getSource() == buttonPass) {

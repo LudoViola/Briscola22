@@ -11,6 +11,7 @@ public class Player implements Comparable<Player> {
     private Hand hand;
     private ArrayList<Card> wonCards;
     private int score;
+    private int currentBet;
 
     public Player(int order) {
         this.order = order;
@@ -41,6 +42,14 @@ public class Player implements Comparable<Player> {
         return hand;
     }
 
+    public int getCurrentBet() {
+        return currentBet;
+    }
+
+    public void setCurrentBet(int currentBet) {
+        this.currentBet = currentBet;
+    }
+
     public Card pickACard(String string) {
             return chooseCard(string);
 
@@ -51,6 +60,10 @@ public class Player implements Comparable<Player> {
         for (Card c:cards) {
             this.score += c.getPoints();
         }
+    }
+
+    public void sortHand() {
+        this.hand.getCards().sort(Card::compareTo);
     }
 
     @Override

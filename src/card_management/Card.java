@@ -3,11 +3,12 @@ package card_management;
 
 import java.awt.*;
 
-public class Card {
+public class Card implements Comparable<Card> {
     private Semi seme;
     private int valore;
     private int points;
     private Image cardImage;
+    private Valore value;
 
     public Card(Semi seme, int valore) {
         this.seme = seme;
@@ -43,7 +44,8 @@ public class Card {
         return "{" +
                 "seme=" + seme +
                 ", valore=" + valore +
-                '}';
+                '}'
+                +value;
     }
 
     public int getValore() {
@@ -77,6 +79,30 @@ public class Card {
        return (this.valore == card.valore && this.seme == card.seme);
     }
 
+    @Override
+    public int compareTo(Card o) {
+
+
+
+        if (this.seme.ordinal() == o.getSeme().ordinal()) {
+            if (this.value.ordinal() > o.getValue().ordinal()) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
+        }else if(this.seme.ordinal() > o.getSeme().ordinal()) {
+            return 1;
+        }
+        else {
+            return -1;
+        }
+    }
+
+    public Valore getValue() {
+        return value;
+    }
+
     public int getPoints() {
         return points;
     }
@@ -87,5 +113,9 @@ public class Card {
 
     public Image getCardImage() {
         return cardImage;
+    }
+
+    public void setValue(Valore value) {
+        this.value = value;
     }
 }

@@ -2,6 +2,7 @@ package game;
 
 import GUI.frames.ChoseFellowScreen;
 import GUI.frames.GameScreen;
+import GUI.frames.NewGameScreen;
 import card_management.Card;
 import card_management.Deck;
 import card_management.Semi;
@@ -27,6 +28,11 @@ public class GameManagement {
     private Deck deckCopy;
 
     public GameManagement() {
+        this.lock = new Object();
+         initialize();
+    }
+
+    private void initialize() {
         this.players = new ArrayList<>();
         this.deck = new Deck();
         this.deck.shuffle();
@@ -34,16 +40,15 @@ public class GameManagement {
         generatePlayers();
         distributeCard();
         bettingPlayers = new CopyOnWriteArrayList<>(players);
-        higherBet = 0;
+        higherBet = 60;
         startingPlayer = 0;
         isFirst = true;
+        betAnswer = false;
 
-
-        this.lock = new Object();
 
         this.screen = new GameScreen(players.get(0), lock);
         this.screen.setVisible(false);
-
+        this.screen.setTurnDone(false);
     }
 
     public void distributeCard() {
@@ -55,14 +60,27 @@ public class GameManagement {
     }
 
     public void startGame() {
-        this.screen.setVisible(true);
-        betAnswer = false;
+        goToMenuScreen();
         bettingTurn();
         chooseFellow();
         playPhase();
         makeScoreBoard();
     }
 
+    private void goToMenuScreen() {
+        NewGameScreen screen = new NewGameScreen(lock);
+        screen.getFrame().setVisible(true);
+        synchronized (lock) {
+            while (!screen.isGameChosen()) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        this.screen.setVisible(true);
+    }
 
 
     private String makeScoreBoard() {
@@ -122,7 +140,8 @@ public class GameManagement {
 
         }
         screen.diplayScoreBoard(makeScoreBoard());
-        screen.dispose();
+        initialize();
+        startGame();
     }
 
     private void switchScreen(Player p) {
@@ -168,33 +187,44 @@ public class GameManagement {
     public void bettingTurn() {
         while (bettingPlayers.size()!=1) {
             for (Player p : bettingPlayers) {
+                p.sortHand();
                 switchScreen(p);
-
-                synchronized (lock) {
-                    while (!screen.isBetDone()) {
-                        try {
-                            lock.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                if(p.getCurrentBet() != higherBet) {
+                    synchronized (lock) {
+                        while (!screen.isBetDone()) {
+                            try {
+                                lock.wait();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                }
-                int bet = screen.getBet();
-                if (bet > 60 && bet < 121) {
-                    if (bet > higherBet) {
-                        higherBet = bet;
-                        startingPlayer = p.getOrder();
+                    int bet = screen.getBet();
+                    if (bet > 60 && bet < 121) {
+                        if (bet > higherBet) {
+                            higherBet = bet;
+                            screen.setHigherBet(higherBet);
+                            startingPlayer = p.getOrder();
+                        }
+                    } else if (bet == 0) {
+                        bettingPlayers.remove(p);
                     }
+                    screen.setBetDone(false);
+                    if (bettingPlayers.size() == 0) {
+                        bettingPlayers.add(new Player(6));
+                    }
+                    isFirst = false;
                 }
-                 else if (bet == 0) {
-                    bettingPlayers.remove(p);
+                else {
+                    break;
                 }
-                screen.setBetDone(false);
-                 if(bettingPlayers.size()== 0) {
-                     bettingPlayers.add(new Player(6));
-                 }
-                 isFirst = false;
             }
+        }
+        if(higherBet == 60) {
+            String b = "Start a new game";
+            screen.diplayBettingWinner(b);
+            initialize();
+            startGame();
         }
             String s = ("Starting player " + startingPlayer + "with bet: " + higherBet);
             screen.diplayBettingWinner(s);
@@ -204,6 +234,7 @@ public class GameManagement {
 
         for(int i = 0; i< 5; i++) {
             Player player = new Player(i);
+            player.setCurrentBet(0);
             players.add(player);
         }
     }

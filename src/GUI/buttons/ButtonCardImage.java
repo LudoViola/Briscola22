@@ -21,5 +21,15 @@ public class ButtonCardImage extends JButton {
         this.addActionListener(listener);
     }
 
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (isSelected()) {
+            setBorder(BorderFactory.createEmptyBorder());
+        } else {
+            setBorder(BorderFactory.createLoweredBevelBorder());
+        }
+    }
+
 
 }

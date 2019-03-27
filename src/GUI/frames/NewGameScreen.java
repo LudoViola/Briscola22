@@ -19,14 +19,10 @@ public class NewGameScreen implements ActionListener {
     private JLabel logo;
     private GameManagement game;
     private JButton startGame;
+    private boolean gameChosen;
+    private final Object lock;
 
-    public NewGameScreen() {
-
-        Runnable r = () -> loadGame();
-
-        new Thread(r).start();
-
-        loadGame();
+    public NewGameScreen(Object lock) {
 
         frame.setTitle("Briscola in 5");
         frame.setSize(1000,800);
@@ -59,20 +55,27 @@ public class NewGameScreen implements ActionListener {
 
         frame.add(backgroundPanel);
 
+        gameChosen = false;
+        this.lock = lock;
+
+    }
+
+    public boolean isGameChosen() {
+        return gameChosen;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == startGame) {
-            game.startGame();
             frame.setVisible(false);
+            synchronized (lock) {
+                gameChosen = true;
+                lock.notifyAll();
+            }
             frame.dispose();
         }
     }
 
-    private void loadGame() {
-        game = new GameManagement();
-    }
 
     private Image addIcon(String path) {
         URL resource = getClass().getClassLoader().getResource(path);
