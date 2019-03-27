@@ -1,7 +1,10 @@
+import GUI.frames.NewGameScreen;
 import game.GameManagement;
 
 public class Test {
     public static void main(String[] args) {
+        //NewGameScreen screen = new NewGameScreen();
+        //screen.getFrame().setVisible(true);
         GameManagement game = new GameManagement();
         game.startGame();
       /*  GameManagement game = new GameManagement();

@@ -9,17 +9,18 @@ import java.util.ArrayList;
 
 public class Table {
     private ArrayList<Card> cards;
-    private ArrayList<Card> briscolas;
     private boolean isFirst;
     private Semi semeDiTurno;
     private int winner;
     private Card winningCard;
     private Semi briscola;
+    private Hand hand;
 
     public Table(Semi briscola) {
         this.cards = new ArrayList<>();
         this.briscola = briscola;
         isFirst = true;
+        this.hand = new Hand(cards);
     }
 
     public void addCard(Card card, Player player) {
@@ -58,7 +59,13 @@ public class Table {
         return cards;
     }
 
+    public Hand getHand() {
+        return this.hand;
+    }
+
     public int getWinner() {
         return winner;
     }
+
+
 }

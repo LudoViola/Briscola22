@@ -1,14 +1,12 @@
 package game;
 
 import GUI.frames.ChoseFellowScreen;
-import GUI.frames.BettingTurnScreen;
+import GUI.frames.GameScreen;
 import card_management.Card;
 import card_management.Deck;
 import card_management.Semi;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -23,7 +21,7 @@ public class GameManagement {
     private int higherBet;
     private CopyOnWriteArrayList<Player> bettingPlayers;
     private boolean betAnswer;
-    private BettingTurnScreen screen;
+    private GameScreen screen;
     private final Object lock;
     private boolean isFirst;
     private Deck deckCopy;
@@ -43,8 +41,8 @@ public class GameManagement {
 
         this.lock = new Object();
 
-        this.screen = new BettingTurnScreen(players.get(0), lock);
-        this.screen.setVisible(true);
+        this.screen = new GameScreen(players.get(0), lock);
+        this.screen.setVisible(false);
 
     }
 
@@ -57,6 +55,7 @@ public class GameManagement {
     }
 
     public void startGame() {
+        this.screen.setVisible(true);
         betAnswer = false;
         bettingTurn();
         chooseFellow();
@@ -67,14 +66,23 @@ public class GameManagement {
 
 
     private String makeScoreBoard() {
+        int teamCallerScore= 0;
+        int teamPopoloScore = 0;
         ArrayList<Player> scoreOrder = new ArrayList<>(players);
         scoreOrder.sort(Player::compareTo);
         int i = 1;
         String s = "";
         for (Player p: scoreOrder) {
+            if(teamCaller.contains(p)) {
+                teamCallerScore+=p.getScore();
+            }
+            else {
+                teamPopoloScore+=p.getScore();
+            }
             s+=("\n" + i + ". Player: " + p.getOrder() + " Score: " + p.getScore());
             i++;
         }
+        s+= ("\nTeamCaller score: " +teamCallerScore+"\nTeamPopolo score: "+ teamPopoloScore);
 
         return s;
     }
@@ -82,10 +90,13 @@ public class GameManagement {
     private void playPhase() {
 
         int hands = 0;
+        Card c = null;
 
         while(hands!=8) {
             Table table = new Table(briscola);
+            Hand hand = new Hand();
             for (Player p:players) {
+                    screen.setTableVisibility(true);
 
                 switchScreen(p);
                 synchronized (lock) {
@@ -97,11 +108,18 @@ public class GameManagement {
                         }
                     }
                 }
-                table.addCard(p.pickACard(screen.getImageString()), p);
+                c = p.pickACard(screen.getImageString());
+                table.addCard(c, p);
+                hand.addCard(c);
+                screen.updateTableCards(c);
+                System.out.println(hand);
                 screen.setTurnDone(false);
             }
             hands++;
             players.get(table.getWinner()).winHand(table.getCards());
+            screen.displayHandWinner(players.get(table.getWinner()));
+            gameOrder(players,table.getWinner());
+
         }
         screen.diplayScoreBoard(makeScoreBoard());
         screen.dispose();
@@ -116,7 +134,7 @@ public class GameManagement {
     }
 
     private void chooseFellow() {
-        rotate(players,startingPlayer);
+        gameOrder(players,startingPlayer);
         ChoseFellowScreen screen1 = new ChoseFellowScreen(players.get(0),lock);
         screen1.setVisible(true);
 
@@ -197,20 +215,20 @@ public class GameManagement {
                 '}';
     }
 
-    public static <T> ArrayList<T> rotate(ArrayList<T> aL, int shift)
+    public static <T> ArrayList<T> gameOrder(ArrayList<T> players, int shift)
     {
-        if (aL.size() == 0)
-            return aL;
+        if (players.size() == 0)
+            return players;
 
         T element = null;
         for(int i = 0; i < shift; i++)
         {
             // remove first element, add it to the end of the ArrayList
-            element = aL.remove( 0);
-            aL.add(element);
+            element = players.remove( 0);
+            players.add(element);
         }
 
-        return aL;
+        return players;
     }
 
     public Deck getDeck() {

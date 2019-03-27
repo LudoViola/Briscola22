@@ -1,6 +1,6 @@
 package GUI.frames;
 
-import GUI.panels.PanelTurningCard;
+import GUI.panels.CardPanel;
 import card_management.Card;
 import card_management.Deck;
 import game.Player;
@@ -44,7 +44,7 @@ public class ChoseFellowScreen implements ActionListener {
 
     public void fillCards() {
         for (Card c:deckCopy.getDeck()) {
-            PanelTurningCard cardSlot = new PanelTurningCard(c.getCardImage());
+            CardPanel cardSlot = new CardPanel(c.getCardImage());
             cardSlot.setActionListener(this);
             cardSlot.setBorder(BorderFactory.createEmptyBorder(0,1,0,1));
             background.add(cardSlot);

@@ -18,6 +18,10 @@ public class Hand {
         this.cards.add(card);
     }
 
+    public Hand(ArrayList<Card> cards) {
+        this.cards = new ArrayList<>(cards);
+    }
+
     Card chooseCard(String string) {
         Card card = null;
         for (Card c:cards) {
@@ -38,5 +42,11 @@ public class Hand {
 
     public ArrayList<Card> getCards() {
         return cards;
+    }
+
+    public void addCard(Card cards) {
+        if(!this.cards.contains(cards)) {
+            this.cards.add(cards);
+        }
     }
 }

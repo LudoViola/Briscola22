@@ -1,19 +1,27 @@
 package GUI.frames;
 
 import GUI.buttons.ButtonCardImage;
-import GUI.panels.PanelTurnPlayerCards;
+import GUI.panels.CardsGroupPanel;
+import GUI.panels.TableCardPanel;
+import card_management.Card;
+import finals.MyColors;
+import game.Hand;
 import game.Player;
+import game.Table;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class BettingTurnScreen extends JFrame implements ActionListener {
+public class GameScreen extends JFrame implements ActionListener {
 
     private JPanel backgroundPanel;
     private JPanel playerCardZone;
-    private PanelTurnPlayerCards cardsContainer;
+    private JPanel tablePanel;
+    private JPanel innerTablePanel;
+    private CardsGroupPanel cardsContainer;
+    private TableCardPanel tableCards;
     private Player currentPlayer;
     private JLabel playerName;
     private JButton buttonBet;
@@ -25,10 +33,14 @@ public class BettingTurnScreen extends JFrame implements ActionListener {
     private JSpinner betSpinner;
     private final Object lock;
     private String imageString;
+    private Table table;
 
-    public BettingTurnScreen(Player firstPlayer, Object lock) throws HeadlessException {
 
-        setTitle("Briscola in 5");
+    public GameScreen(Player firstPlayer, Object lock) throws HeadlessException {
+
+
+
+        setTitle("Briscola in 5 Partita Simulata");
         setSize(1000,800);
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -41,20 +53,30 @@ public class BettingTurnScreen extends JFrame implements ActionListener {
         backgroundPanel.setLayout(new BorderLayout());
 
         JPanel rightPanel = new JPanel();
+        rightPanel.setBackground(MyColors.brown);
         rightPanel.setPreferredSize(new Dimension(100,1000));
 
         SpinnerNumberModel model = new SpinnerNumberModel(61,61,120,1);
         betSpinner = new JSpinner(model);
+        betSpinner.setBackground(MyColors.brown);
+        betSpinner.setForeground(Color.BLACK);
 
         JPanel betPanel = new JPanel();
         betPanel.setLayout(new GridLayout(4,1));
+        betPanel.setBackground(MyColors.brown);
         betPanel.setBorder(BorderFactory.createEmptyBorder(160,0,0,0));
 
         playerName = new JLabel("Player0");
+        playerName.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        playerName.setBackground(MyColors.brown);
         buttonBet = new JButton("BET");
+        buttonBet.setBackground(MyColors.brown);
         buttonBet.addActionListener(this);
+        buttonBet.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
         buttonPass = new JButton("PASS");
         buttonPass.setActionCommand("PASS");
+        buttonPass.setBackground(MyColors.brown);
+        buttonPass.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
         buttonPass.addActionListener(this);
 
         rightPanel.add(betPanel);
@@ -63,10 +85,18 @@ public class BettingTurnScreen extends JFrame implements ActionListener {
         betPanel.add(betSpinner);
         betPanel.add(buttonPass);
 
-        JPanel table = new JPanel();
-        table.setPreferredSize(new Dimension(200,100));
-        table.setBorder(BorderFactory.createEmptyBorder(40,40,40,40));
-        table.setBackground(Color.GREEN);
+        tablePanel = new JPanel();
+        tablePanel.setPreferredSize(new Dimension(200,100));
+        tablePanel.setBorder(BorderFactory.createEmptyBorder(40,40,40,40));
+        tablePanel.setBackground(Color.GREEN);
+
+        innerTablePanel = new JPanel();
+
+        tableCards = new TableCardPanel();
+        innerTablePanel.add(tableCards.getPanel());
+        innerTablePanel.setVisible(false);
+
+        tablePanel.add(innerTablePanel);
 
         playerCardZone = new JPanel();
         playerCardZone.setPreferredSize(new Dimension(200,200));
@@ -78,11 +108,11 @@ public class BettingTurnScreen extends JFrame implements ActionListener {
         menuZone.setPreferredSize(new Dimension(200,50));
         menuZone.setBackground(Color.BLACK);
 
-        cardsContainer = new PanelTurnPlayerCards(firstPlayer.getHand());
+        cardsContainer = new CardsGroupPanel(firstPlayer.getHand());
         playerCardZone.add(cardsContainer.getPanel());
 
         backgroundPanel.add(menuZone, BorderLayout.PAGE_START);
-        backgroundPanel.add(table,BorderLayout.CENTER);
+        backgroundPanel.add(tablePanel,BorderLayout.CENTER);
         backgroundPanel.add(rightPanel,BorderLayout.LINE_START);
         backgroundPanel.add(playerCardZone, BorderLayout.PAGE_END);
 
@@ -103,6 +133,20 @@ public class BettingTurnScreen extends JFrame implements ActionListener {
     public void diplayScoreBoard( String s) {
         JOptionPane.showMessageDialog(this,s,"Classifica", JOptionPane.INFORMATION_MESSAGE);
     }
+
+    public void displayHandWinner(Player p) {
+        String s = "Player " + p.getOrder();
+        JOptionPane.showMessageDialog(this,s,"Hand Winner", JOptionPane.INFORMATION_MESSAGE);
+        tableCards.update(p);
+    }
+
+
+    public void updateTableCards(Card card) {
+            tableCards.update(card);
+            revalidate();
+            repaint();
+    }
+
 
     public void updatePlayerCards(Player player) {
         cardsContainer.update(player.getHand());
@@ -178,6 +222,10 @@ public class BettingTurnScreen extends JFrame implements ActionListener {
         buttonBet.setVisible(b);
         buttonPass.setVisible(b);
         betSpinner.setVisible(b);
+    }
+
+    public void setTableVisibility(boolean b) {
+        innerTablePanel.setVisible(b);
     }
 
     public void setActionListener() {
