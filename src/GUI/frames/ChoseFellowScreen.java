@@ -3,7 +3,8 @@ package GUI.frames;
 import GUI.panels.CardPanel;
 import card_management.Card;
 import card_management.Deck;
-import game.Player;
+import game.players.ControlledPlayer;
+import game.players.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,10 +65,14 @@ public class ChoseFellowScreen implements ActionListener {
         for (Card c:deckCopy.getDeck()) {
             if(c.getCardImage().toString().equals(e.getActionCommand())) {
                 cardChosen = c;
-                JOptionPane.showMessageDialog(frame.getContentPane(),c,"Card Chosen", JOptionPane.INFORMATION_MESSAGE);
-                frame.dispose();
+                endPhase(c);
             }
         }
+    }
+
+    public void endPhase(Card c) {
+        JOptionPane.showMessageDialog(frame.getContentPane(),c,"Card Chosen", JOptionPane.INFORMATION_MESSAGE);
+        frame.dispose();
     }
 
     public Card getCardChosen() {

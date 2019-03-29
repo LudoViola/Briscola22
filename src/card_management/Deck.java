@@ -2,9 +2,6 @@ package card_management;
 
 import GUI.frames.NewGameScreen;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,7 +45,7 @@ public class Deck {
     public void addValore() {
         for (Card c:deck) {
             Valore valore = null;
-            switch (c.getValore()) {
+            switch (c.getValor()) {
                 case 1:
                     valore = Valore.ACE;
                    break;
@@ -104,10 +101,5 @@ public class Deck {
 
     public ArrayList<Card> getDeck() {
         return deck;
-    }
-
-    public void setDeck(ArrayList<Card> deck) {
-        this.deck.clear();
-        this.deck = deck;
     }
 }

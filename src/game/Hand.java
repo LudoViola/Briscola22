@@ -11,11 +11,11 @@ import java.util.Collections;
 public class Hand {
     private ArrayList<Card> cards;
 
-    Hand() {
+    public Hand() {
         this.cards = new ArrayList<>();
     }
 
-    void draw(Card card)
+    public void draw(Card card)
     {
             this.cards.add(card);
     }
@@ -24,7 +24,7 @@ public class Hand {
         this.cards = new ArrayList<>(cards);
     }
 
-    Card chooseCard(String string) {
+    public Card chooseCard(String string) {
         Card card = null;
         for (Card c:cards) {
             if(c.getCardImage().toString().equals(string)) {
@@ -33,6 +33,10 @@ public class Hand {
         }
         this.cards.remove(card);
         return card;
+    }
+
+    public void chooseCard(Card card) {
+        this.cards.remove(card);
     }
 
     @Override

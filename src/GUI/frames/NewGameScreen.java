@@ -2,7 +2,7 @@ package GUI.frames;
 
 import GUI.panels.ImagePanel;
 import finals.MyColors;
-import game.GameManagement;
+import game.GameType;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -17,10 +17,12 @@ public class NewGameScreen implements ActionListener {
     JFrame frame = new JFrame();
     ImagePanel backgroundPanel;
     private JLabel logo;
-    private GameManagement game;
-    private JButton startGame;
+    private JButton startControlledGameButton;
+    private JButton startPlayerVSAiGameButton;
+    private JButton startSimulatedGameButton;
     private boolean gameChosen;
     private final Object lock;
+    private GameType gameType;
 
     public NewGameScreen(Object lock) {
 
@@ -36,15 +38,25 @@ public class NewGameScreen implements ActionListener {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(MyColors.transparent);
-        buttonPanel.setPreferredSize(new Dimension(100,120));
-        buttonPanel.setLayout(new GridLayout(1,1));
+        buttonPanel.setPreferredSize(new Dimension(200,120));
+        buttonPanel.setLayout(new GridLayout(3,1));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(1,1,0,0));
 
-        startGame = new JButton("Start Game");
-        startGame.setBackground(Color.orange);
-        startGame.addActionListener(this);
+        startControlledGameButton = new JButton("Start Controlled Game");
+        startControlledGameButton.setBackground(Color.orange);
+        startControlledGameButton.addActionListener(this);
 
-        buttonPanel.add(startGame);
+        startSimulatedGameButton = new JButton("Start Simulated Game");
+        startSimulatedGameButton.setBackground(Color.orange);
+        startSimulatedGameButton.addActionListener(this);
+
+        startPlayerVSAiGameButton = new JButton("Start Player Vs Ai Game");
+        startPlayerVSAiGameButton.setBackground(Color.orange);
+        startPlayerVSAiGameButton.addActionListener(this);
+
+        buttonPanel.add(startSimulatedGameButton);
+        buttonPanel.add(startPlayerVSAiGameButton);
+        buttonPanel.add(startControlledGameButton);
 
         logo = new JLabel();
         logo.setIcon(new ImageIcon(addIcon("resources/logo.png")));
@@ -60,20 +72,37 @@ public class NewGameScreen implements ActionListener {
 
     }
 
+    public GameType getGameType() {
+        return gameType;
+    }
+
     public boolean isGameChosen() {
         return gameChosen;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == startGame) {
-            frame.setVisible(false);
-            synchronized (lock) {
-                gameChosen = true;
-                lock.notifyAll();
-            }
-            frame.dispose();
+        if(e.getSource() == startControlledGameButton) {
+            gameType = GameType.CONTROLLED;
+            runGame();
         }
+        else if(e.getSource() == startSimulatedGameButton) {
+            gameType = GameType.SIMULATED;
+            runGame();
+        }
+        else if(e.getSource() == startPlayerVSAiGameButton) {
+            gameType = GameType.PLAYERVSAI;
+            runGame();
+        }
+    }
+
+    private void runGame() {
+        frame.setVisible(false);
+        synchronized (lock) {
+            gameChosen = true;
+            lock.notifyAll();
+        }
+        frame.dispose();
     }
 
 

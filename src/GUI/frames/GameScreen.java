@@ -5,9 +5,9 @@ import GUI.panels.CardsGroupPanel;
 import GUI.panels.TableCardPanel;
 import card_management.Card;
 import finals.MyColors;
-import game.Hand;
-import game.Player;
+import game.players.ControlledPlayer;
 import game.Table;
+import game.players.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -136,11 +136,21 @@ public class GameScreen extends JFrame implements ActionListener {
     }
 
     public void displayHandWinner(Player p) {
-        String s = "Player " + p.getOrder();
+        String s = "ControlledPlayer " + p.getOrder();
         JOptionPane.showMessageDialog(this,s,"Hand Winner", JOptionPane.INFORMATION_MESSAGE);
         tableCards.update(p);
     }
 
+    public void displayBettingMove(Player p,int bet) {
+        String s;
+        if(bet ==0) {
+            s = "Player "+p.getOrder() +" Pass";
+        }
+        else {
+            s = "Player " + p.getOrder() + " bet " + bet;
+        }
+        JOptionPane.showMessageDialog(this,s,"BettingMove", JOptionPane.INFORMATION_MESSAGE);
+    }
 
     public void updateTableCards(Card card) {
             tableCards.update(card);
@@ -221,8 +231,8 @@ public class GameScreen extends JFrame implements ActionListener {
         }
     }
 
-    public void setLabelText(int order) {
-        playerName.setText("Player" + order);
+    public void setLabelText(Player p) {
+        playerName.setText(p.getClass().getSimpleName()+"  " + p.getOrder());
     }
 
     public void setBetAreaVisibility(boolean b) {

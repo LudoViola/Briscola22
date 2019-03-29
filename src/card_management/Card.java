@@ -38,24 +38,6 @@ public class Card implements Comparable<Card> {
                     break;
         }
     }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "seme=" + seme +
-                ", valore=" + valore +
-                '}'
-                +value;
-    }
-
-    public int getValore() {
-        return valore;
-    }
-
-    public Semi getSeme() {
-        return seme;
-    }
-
     public boolean isGreaterStessoSeme(Card card) {
         if(this.valore == 1) {
             return true;
@@ -63,12 +45,12 @@ public class Card implements Comparable<Card> {
         else if(this.valore == 3 && card.valore!=1) {
             return true;
         }
-        else if(this.valore>card.valore && card.valore!=1 && card.valore!=3) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        else return this.valore > card.valore && card.valore != 1 && card.valore != 3;
+    }
+
+    @Override
+    public String toString() {
+        return "{" + "seme=" + seme + '}' +value;
     }
 
      @Override
@@ -99,23 +81,25 @@ public class Card implements Comparable<Card> {
         }
     }
 
-    public Valore getValue() {
+    int getValor() {
+        return valore;
+    }
+    public Semi getSeme() {
+        return seme;
+    }
+    private Valore getValue() {
         return value;
     }
-
     public int getPoints() {
         return points;
     }
-
-    public void setCardImage(Image cardImage) {
-        this.cardImage = cardImage;
-    }
-
     public Image getCardImage() {
         return cardImage;
     }
-
-    public void setValue(Valore value) {
+    void setCardImage(Image cardImage) {
+        this.cardImage = cardImage;
+    }
+    void setValue(Valore value) {
         this.value = value;
     }
 }
