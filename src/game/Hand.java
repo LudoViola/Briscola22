@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Hand {
+    private int[] cardsForSuit = {0,0,0,0};
     private ArrayList<Card> cards;
 
     public Hand() {
@@ -22,6 +23,12 @@ public class Hand {
 
     public Hand(ArrayList<Card> cards) {
         this.cards = new ArrayList<>(cards);
+    }
+
+    public void divideCardsForSuit() {
+        for (Card c:cards) {
+            cardsForSuit[c.getSeme().ordinal()] += 1;
+        }
     }
 
     public Card chooseCard(String string) {
@@ -54,5 +61,9 @@ public class Hand {
         if(!this.cards.contains(cards)) {
             this.cards.add(cards);
         }
+    }
+
+    public int[] getCardsForSuit() {
+        return cardsForSuit;
     }
 }

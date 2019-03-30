@@ -1,5 +1,5 @@
 package game;
 
 public enum GameType {
-    CONTROLLED,SIMULATED, PLAYERVSAI;
+    CONTROLLED,SIMULATED, PLAYERVSAI, EASY;
 }

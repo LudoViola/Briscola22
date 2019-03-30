@@ -6,10 +6,7 @@ import GUI.frames.NewGameScreen;
 import card_management.Card;
 import card_management.Deck;
 import card_management.Semi;
-import game.players.AIPlayer;
-import game.players.AIPlayerRandom;
-import game.players.ControlledPlayer;
-import game.players.Player;
+import game.players.*;
 
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -63,9 +60,15 @@ public class GameManagement {
     private void bettingTurn() {
         while (bettingPlayers.size()!=1) {
             for (Player p : bettingPlayers) {
-                System.out.println(bettingPlayers);
                 int bet = 0;
                 p.sortHand();
+                if(p instanceof AIPlayerEasy) {
+                    ((AIPlayerEasy) p).setCardsForSuit();
+                    System.out.println(p.getHand());
+                    for(int i = 0; i < 4; i++) {
+                        System.out.println(p.getHand().getCardsForSuit()[i]);
+                    }
+                }
                 switchScreen(p);
                 if (!(bettingPlayers.contains(p) && bettingPlayers.size() == 1)) {
                     if(p instanceof ControlledPlayer) {
@@ -86,10 +89,13 @@ public class GameManagement {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        AIPlayerRandom playerRandom = (AIPlayerRandom) p;
+                        AIPlayer playerRandom = (AIPlayer) p;
                         int temp = playerRandom.chooseBet();
                         while (!(temp<121 && temp> higherBet || temp == 0)) {
                             temp = playerRandom.chooseBet();
+                            if(p instanceof AIPlayerEasy) {
+                                temp = 0;
+                            }
                         }
                         bet = temp;
                     }
@@ -102,8 +108,14 @@ public class GameManagement {
                             screen.displayBettingMove(p,bet);
                         }
                     } else if (bet == 0) {
+
                         screen.displayBettingMove(p,bet);
                         bettingPlayers.remove(p);
+                    }
+                    try {
+                        Thread.sleep(1500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                     screen.setBetDone(false);
                     isFirst = false;
@@ -118,6 +130,11 @@ public class GameManagement {
         }
         String s = ("Starting player " + startingPlayer + "with bet: " + higherBet);
         screen.diplayBettingWinner(s);
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void chooseFellow() {
@@ -136,6 +153,7 @@ public class GameManagement {
             }
 
             fellowCard = screen1.getCardChosen();
+            screen.log("Carta Chiamata: " + fellowCard);
 
         }
         else if(players.get(0) instanceof AIPlayer) {
@@ -146,13 +164,11 @@ public class GameManagement {
             }
             AIPlayer player = (AIPlayer) players.get(0);
             fellowCard = player.chooseFellow();
+            screen.log("Carta Chiamata: " + fellowCard);
             screen1.endPhase(fellowCard);
         }
         briscola = fellowCard.getSeme();
-        System.out.println(fellowCard);
-
         screen.setListenerEnabled(true);
-
         screen.updatePlayerCards(players.get(0));
         screen.setLabelText(players.get(0));
         screen.update(screen.getGraphics());
@@ -178,7 +194,7 @@ public class GameManagement {
             else {
                 teamPopoloScore+=p.getScore();
             }
-            s.append("\n").append(i).append(". ").append(p.getClass().getSimpleName()).append(": ").append(p.getOrder()).append(" Score: ").append(p.getScore());
+            s.append("\n").append(i).append(". ").append(p.getPlayerID()).append(" Score: ").append(p.getScore());
             i++;
         }
         s.append("\nTeamCaller score: ").append(teamCallerScore).append("\nTeamPopolo score: ").append(teamPopoloScore);
@@ -195,7 +211,10 @@ public class GameManagement {
             System.out.println(briscola);
             Table table = new Table(briscola);
             Hand hand = new Hand();
+            int i = 0;
             for (Player p:players) {
+                p.setOrder(i);
+                i++;
                 screen.setTableVisibility(true);
                 switchScreen(p);
                 if(p instanceof ControlledPlayer) {
@@ -220,23 +239,45 @@ public class GameManagement {
                     c = player.throwCard();
                     player.getHand().chooseCard(c);
                 }
+                screen.log(p.getOrder() + p.getPlayerID()+" throws "+ c);
                 table.addCard(c, p);
                 hand.addCard(c);
-                screen.updateTableCards(c);
-                System.out.println(p.getClass().getSimpleName() + p.getOrder());
+                System.out.println(p.getPlayerID());
                 System.out.println(hand);
+                screen.updateTableCards(c);
                 screen.setTurnDone(false);
             }
             hands++;
-            System.out.println(players.get(table.getWinner()).getClass().getSimpleName() + table.getWinner());
-            players.get(table.getWinner()).winHand(table.getCards());
-            screen.displayHandWinner(players.get(table.getWinner()));
-            gameOrder(players,table.getWinner());
+            for (Player p:players) {
+                if(table.getWinner().equals(p.getPlayerID())) {
+                    p.winHand(table.getCards());
+                    screen.displayHandWinner(p);
+                }
+            }
+            System.out.println(players);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            gameOrder(players,table.getStartingPlayer());
+            System.out.println(players);
 
         }
         screen.diplayScoreBoard(makeScoreBoard());
-        resetGameEnvironment();
-        startGame();
+        synchronized (lock) {
+            while (!screen.isGameEnded()) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            screen.setVisible(false);
+            resetGameEnvironment();
+            startGame();
+        }
+
     }
 
     private void goToMenuScreen() {
@@ -287,12 +328,27 @@ public class GameManagement {
                 }
                 break;
             case SIMULATED:
-                for(int i = 0; i < 5; i++) {
+                for(int i = 0; i < 2; i++) {
+                    AIPlayer player1 = new AIPlayerEasy(i);
+                    player1.setCurrentBet(0);
+                    players.add(player1);
+                }
+                for(int i = 2; i < 5; i++) {
                     AIPlayer player1 = new AIPlayerRandom(i);
                     player1.setCurrentBet(0);
                     players.add(player1);
                 }
 
+                break;
+            case EASY:
+                ControlledPlayer player2 = new ControlledPlayer(0);
+                player2.setCurrentBet(0);
+                players.add(player2);
+                for(int i = 1; i < 5; i++) {
+                    AIPlayer player1 = new AIPlayerEasy(i);
+                    player1.setCurrentBet(0);
+                    players.add(player1);
+                }
                 break;
         }
     }
@@ -319,9 +375,11 @@ public class GameManagement {
         for (Player p:players) {
             if(p.getOrder() == 0) {
                 teamCaller.add(p);
+                p.setRole(PlayerRole.CALLER);
             }
             else if(p.getHand().getCards().contains(fellowCard)) {
                 teamCaller.add(p);
+                p.setRole(PlayerRole.POPOLO);
             }
             else {
                 teamPopolo.add(p);
@@ -334,6 +392,9 @@ public class GameManagement {
             for(int i = 0; i < 5; i++) {
                 players.get(i).draw(deck.distributeCard());
             }
+        }
+      for (Player p:players ) {
+          p.divideCardForSuit();
         }
     }
 

@@ -6,6 +6,7 @@ import game.GameType;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,13 +20,13 @@ public class NewGameScreen implements ActionListener {
     private JLabel logo;
     private JButton startControlledGameButton;
     private JButton startPlayerVSAiGameButton;
+    private JButton startPlayerVSEasyGameButton;
     private JButton startSimulatedGameButton;
     private boolean gameChosen;
     private final Object lock;
     private GameType gameType;
 
     public NewGameScreen(Object lock) {
-
         frame.setTitle("Briscola in 5");
         frame.setSize(1000,800);
         frame.setResizable(false);
@@ -38,23 +39,32 @@ public class NewGameScreen implements ActionListener {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(MyColors.transparent);
-        buttonPanel.setPreferredSize(new Dimension(200,120));
-        buttonPanel.setLayout(new GridLayout(3,1));
+        buttonPanel.setPreferredSize(new Dimension(300,200));
+        buttonPanel.setLayout(new GridLayout(4,1));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(1,1,0,0));
 
         startControlledGameButton = new JButton("Start Controlled Game");
         startControlledGameButton.setBackground(Color.orange);
+        startControlledGameButton.setBorder(new RoundedBorder(10));
         startControlledGameButton.addActionListener(this);
 
         startSimulatedGameButton = new JButton("Start Simulated Game");
         startSimulatedGameButton.setBackground(Color.orange);
+        startSimulatedGameButton.setBorder(new RoundedBorder(10));
         startSimulatedGameButton.addActionListener(this);
 
-        startPlayerVSAiGameButton = new JButton("Start Player Vs Ai Game");
+        startPlayerVSAiGameButton = new JButton("Start Player Vs Random Game");
         startPlayerVSAiGameButton.setBackground(Color.orange);
+        startPlayerVSAiGameButton.setBorder(new RoundedBorder(10));
         startPlayerVSAiGameButton.addActionListener(this);
 
+        startPlayerVSEasyGameButton = new JButton("Start Easy");
+        startPlayerVSEasyGameButton.setBackground(Color.orange);
+        startPlayerVSEasyGameButton.setBorder(new RoundedBorder(10));
+        startPlayerVSEasyGameButton.addActionListener(this);
+
         buttonPanel.add(startSimulatedGameButton);
+        buttonPanel.add(startPlayerVSEasyGameButton);
         buttonPanel.add(startPlayerVSAiGameButton);
         buttonPanel.add(startControlledGameButton);
 
@@ -94,6 +104,10 @@ public class NewGameScreen implements ActionListener {
             gameType = GameType.PLAYERVSAI;
             runGame();
         }
+        else if(e.getSource() == startPlayerVSEasyGameButton) {
+            gameType = GameType.EASY;
+            runGame();
+        }
     }
 
     private void runGame() {
@@ -127,5 +141,30 @@ public class NewGameScreen implements ActionListener {
 
     public JFrame getFrame() {
         return frame;
+    }
+
+     static class RoundedBorder implements Border {
+
+        private int radius;
+
+
+        RoundedBorder(int radius) {
+            this.radius = radius;
+        }
+
+
+        public Insets getBorderInsets(Component c) {
+            return new Insets(this.radius+1, this.radius+1, this.radius+2, this.radius);
+        }
+
+
+        public boolean isBorderOpaque() {
+            return true;
+        }
+
+
+        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+            g.drawRoundRect(x, y, width-1, height-1, radius, radius);
+        }
     }
 }

@@ -71,7 +71,7 @@ public class ChoseFellowScreen implements ActionListener {
     }
 
     public void endPhase(Card c) {
-        JOptionPane.showMessageDialog(frame.getContentPane(),c,"Card Chosen", JOptionPane.INFORMATION_MESSAGE);
+        //JOptionPane.showMessageDialog(frame.getContentPane(),c,"Card Chosen", JOptionPane.INFORMATION_MESSAGE);
         frame.dispose();
     }
 

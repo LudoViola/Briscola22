@@ -2,7 +2,6 @@ package game;
 
 import card_management.Card;
 import card_management.Semi;
-import game.players.ControlledPlayer;
 import game.players.Player;
 
 import java.util.ArrayList;
@@ -10,13 +9,14 @@ import java.util.ArrayList;
 public class Table {
     private ArrayList<Card> cards;
     private boolean isFirst;
-    private Semi semeDiTurno;
-    private int winner;
+    private String winner;
+    private int startingPlayer;
     private Card winningCard;
     private Semi briscola;
     private Hand hand;
 
     public Table(Semi briscola) {
+        this.startingPlayer=0;
         this.cards = new ArrayList<>();
         this.briscola = briscola;
         isFirst = true;
@@ -25,34 +25,31 @@ public class Table {
 
     public void addCard(Card card, Player player) {
         if(isFirst) {
-            semeDiTurno = card.getSeme();
             tempWinner(card, player);
             isFirst = false;
         }
         else {
-            if(semeDiTurno == briscola && card.getSeme() == briscola && card.isGreaterStessoSeme(winningCard)) {
+            if(winningCard.getSeme() == briscola && card.getSeme() == briscola && card.isGreaterStessoSeme(winningCard)) {
                 tempWinner(card,player);
+            }
+            else if (card.getSeme() == winningCard.getSeme() && card.isGreaterStessoSeme(winningCard)) {
+                tempWinner(card, player);
             }
             else {
                 if(card.getSeme() == briscola && winningCard.getSeme()!=briscola) {
-                semeDiTurno = briscola;
                 tempWinner(card,player);
-            }
-                else if (card.getSeme() == semeDiTurno && card.isGreaterStessoSeme(winningCard)) {
-                    tempWinner(card, player);
-                }
-
-                else {
-                    this.cards.add(card);
                 }
             }
         }
+        System.out.println(winningCard);
+        card.setOwner(player.getRole());
+        this.cards.add(card);
     }
 
     private void tempWinner(Card card, Player player) {
-        winner = player.getOrder();
+        winner = player.getPlayerID();
         winningCard = card;
-        this.cards.add(card);
+        startingPlayer = player.getOrder();
     }
 
     public ArrayList<Card> getCards() {
@@ -63,9 +60,11 @@ public class Table {
         return this.hand;
     }
 
-    public int getWinner() {
+    public String getWinner() {
         return winner;
     }
 
-
+    public int getStartingPlayer() {
+        return startingPlayer;
+    }
 }

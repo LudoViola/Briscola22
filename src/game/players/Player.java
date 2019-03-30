@@ -11,12 +11,16 @@ public abstract class Player implements Comparable<Player> {
      ArrayList<Card> wonCards;
      int score;
      int currentBet;
+     String playerID;
+     private boolean flag = true;
+     PlayerRole role;
 
     public Player(int order) {
         this.order = order;
         this.wonCards = new ArrayList<>();
         this.hand = new Hand();
         this.score = 0;
+        playerID = getClass().getSimpleName() + " " + order;
     }
 
     public Card pickACard(String string) {
@@ -53,15 +57,25 @@ public abstract class Player implements Comparable<Player> {
         return hand;
     }
 
-    public int getCurrentBet() {
-        return currentBet;
+    public String getPlayerID() {
+        return playerID;
     }
 
     public void setCurrentBet(int currentBet) {
         this.currentBet = currentBet;
     }
 
+    public void setRole(PlayerRole role) {
+        this.role = role;
+    }
 
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    public PlayerRole getRole() {
+        return role;
+    }
 
     @Override
     public int compareTo(Player o) {
@@ -72,4 +86,15 @@ public abstract class Player implements Comparable<Player> {
         return score;
     }
 
+    public void divideCardForSuit() {
+        if(flag) {
+            this.hand.divideCardsForSuit();
+            flag = false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return playerID;
+    }
 }

@@ -1,6 +1,8 @@
 package card_management;
 
 
+import game.players.PlayerRole;
+
 import java.awt.*;
 
 public class Card implements Comparable<Card> {
@@ -9,6 +11,7 @@ public class Card implements Comparable<Card> {
     private int points;
     private Image cardImage;
     private Valore value;
+    private PlayerRole owner;
 
     public Card(Semi seme, int valore) {
         this.seme = seme;
@@ -39,13 +42,7 @@ public class Card implements Comparable<Card> {
         }
     }
     public boolean isGreaterStessoSeme(Card card) {
-        if(this.valore == 1) {
-            return true;
-        }
-        else if(this.valore == 3 && card.valore!=1) {
-            return true;
-        }
-        else return this.valore > card.valore && card.valore != 1 && card.valore != 3;
+        return this.value.ordinal() > card.getValue().ordinal();
     }
 
     @Override
@@ -101,5 +98,13 @@ public class Card implements Comparable<Card> {
     }
     void setValue(Valore value) {
         this.value = value;
+    }
+
+    public PlayerRole getOwner() {
+        return owner;
+    }
+
+    public void setOwner(PlayerRole owner) {
+        this.owner = owner;
     }
 }
