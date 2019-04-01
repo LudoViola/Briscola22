@@ -67,4 +67,8 @@ public class Table {
     public int getStartingPlayer() {
         return startingPlayer;
     }
+
+    public Card getWinningCard() {
+        return winningCard;
+    }
 }

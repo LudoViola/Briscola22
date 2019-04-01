@@ -2,6 +2,7 @@ package GUI.frames;
 
 import GUI.buttons.ButtonCardImage;
 import GUI.panels.CardsGroupPanel;
+import GUI.panels.ImagePanel;
 import GUI.panels.LogPanel;
 import GUI.panels.TableCardPanel;
 import card_management.Card;
@@ -15,6 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.net.URL;
 
 
 public class GameScreen extends JFrame implements ActionListener {
@@ -126,6 +128,7 @@ public class GameScreen extends JFrame implements ActionListener {
         betPanel.add(betSpinner);
         betPanel.add(buttonPass);
 
+        URL resource = getClass().getClassLoader().getResource( "resources/tableBackground.jpg" );
         tablePanel = new JPanel();
         tablePanel.setPreferredSize(new Dimension(200,100));
         tablePanel.setBorder(BorderFactory.createEmptyBorder(40,40,40,40));
@@ -159,6 +162,7 @@ public class GameScreen extends JFrame implements ActionListener {
         exitButton.setPreferredSize(new Dimension(MAX_WIDTH/6,50));
         exitButton.setBorder(new NewGameScreen.RoundedBorder(10));
         exitButton.addActionListener(this);
+        exitButton.setVisible(false);
 
         menuZone.add(exitButton);
 
@@ -309,10 +313,10 @@ public class GameScreen extends JFrame implements ActionListener {
             }
         }
         else if(e.getSource() == exitButton) {
-            synchronized (lock) {
-                gameEnded = true;
-                lock.notifyAll();
-            }
+                synchronized (lock) {
+                    gameEnded = true;
+                    lock.notifyAll();
+                }
         }
     }
 
@@ -328,6 +332,10 @@ public class GameScreen extends JFrame implements ActionListener {
 
     public void setTableVisibility(boolean b) {
         innerTablePanel.setVisible(b);
+    }
+
+    public void setExitButtonVisibility(boolean b) {
+        exitButton.setVisible(b);
     }
 
     public void setActionListener() {

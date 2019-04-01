@@ -67,6 +67,31 @@ public class AIPlayerEasy extends AIPlayer {
 
     @Override
     public Card throwCard() {
-        return this.hand.getCards().get(random.nextInt(this.hand.getCards().size()));
+        if(getCardToWin() !=null) {
+            return getCardToWin();
+        }else {
+            return this.hand.getCards().get(random.nextInt(this.hand.getCards().size()));
+        }
+    }
+
+    private Card getCardToWin() {
+        Card d = null;
+        for (Card c:this.hand.getCards()) {
+            if(c.getSeme() == briscola && tempWinningCard.getSeme() == briscola && c.isGreaterStessoSeme(tempWinningCard)) {
+                d = c;
+            break;
+            }
+            else if (c.getSeme() == tempWinningCard.getSeme() && c.isGreaterStessoSeme(tempWinningCard)) {
+            d = c;
+            break;
+            }
+            else {
+                if(c.getSeme() == briscola && tempWinningCard.getSeme()!=briscola) {
+                    d = c;
+                    break;
+                }
+            }
+        }
+        return d;
     }
 }

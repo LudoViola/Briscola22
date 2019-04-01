@@ -32,24 +32,26 @@ public class NewGameScreen implements ActionListener {
         frame.setResizable(false);
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
 
-        backgroundPanel = new ImagePanel(addIcon("resources/backGround.jpg"));
+        backgroundPanel = new ImagePanel(addIcon("resources/tableBackground.jpg"));
         backgroundPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         backgroundPanel.setSize(frame.getSize());
-        backgroundPanel.setLayout(new FlowLayout(FlowLayout.CENTER,300,40));
+        backgroundPanel.setLayout(new FlowLayout(FlowLayout.CENTER,300,20));
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(MyColors.transparent);
-        buttonPanel.setPreferredSize(new Dimension(300,200));
-        buttonPanel.setLayout(new GridLayout(4,1));
+        buttonPanel.setPreferredSize(new Dimension(300,400));
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER,300,20));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(1,1,0,0));
 
         startControlledGameButton = new JButton("Start Controlled Game");
         startControlledGameButton.setBackground(Color.orange);
+        startControlledGameButton.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
         startControlledGameButton.setBorder(new RoundedBorder(10));
         startControlledGameButton.addActionListener(this);
 
         startSimulatedGameButton = new JButton("Start Simulated Game");
         startSimulatedGameButton.setBackground(Color.orange);
+        startSimulatedGameButton.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
         startSimulatedGameButton.setBorder(new RoundedBorder(10));
         startSimulatedGameButton.addActionListener(this);
 
@@ -120,7 +122,7 @@ public class NewGameScreen implements ActionListener {
     }
 
 
-    private Image addIcon(String path) {
+        Image addIcon(String path) {
         URL resource = getClass().getClassLoader().getResource(path);
         Image body = findImage(resource);
         return body;

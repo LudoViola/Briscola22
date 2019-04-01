@@ -44,7 +44,7 @@ public class GameManagement {
         distributeCard();
         this.screen = new GameScreen(players.get(0), lock);
         bettingPlayers = new CopyOnWriteArrayList<>(players);
-        this.screen.setVisible(true);
+        this.screen.setVisible(false);
 
         this.screen.setTurnDone(false);
     }
@@ -206,9 +206,9 @@ public class GameManagement {
 
         int hands = 0;
         Card c = null;
+        Card winningCard = null;
 
         while(hands!=8) {
-            System.out.println(briscola);
             Table table = new Table(briscola);
             Hand hand = new Hand();
             int i = 0;
@@ -236,14 +236,16 @@ public class GameManagement {
                         e.printStackTrace();
                     }
                     AIPlayer player = (AIPlayer) p;
+                    if(winningCard!=null) {
+                        player.setTempWinningCard(winningCard);
+                    }
                     c = player.throwCard();
                     player.getHand().chooseCard(c);
                 }
                 screen.log(p.getOrder() + p.getPlayerID()+" throws "+ c);
                 table.addCard(c, p);
+                winningCard = table.getWinningCard();
                 hand.addCard(c);
-                System.out.println(p.getPlayerID());
-                System.out.println(hand);
                 screen.updateTableCards(c);
                 screen.setTurnDone(false);
             }
@@ -265,6 +267,7 @@ public class GameManagement {
 
         }
         screen.diplayScoreBoard(makeScoreBoard());
+        screen.setExitButtonVisibility(true);
         synchronized (lock) {
             while (!screen.isGameEnded()) {
                 try {
