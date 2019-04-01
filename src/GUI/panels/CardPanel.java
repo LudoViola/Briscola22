@@ -47,4 +47,8 @@ public class CardPanel extends JPanel {
     public void setBackground(Color bg) {
         super.setBackground(bg);
     }
+
+    public void turn() {
+        cardLayout.next(this);
+    }
 }

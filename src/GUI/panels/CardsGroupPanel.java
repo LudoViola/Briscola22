@@ -27,7 +27,7 @@ public class CardsGroupPanel {
         }
     }
 
-    public void update(Hand hand) {
+    public void update(Hand hand,boolean isControlled) {
         for (CardPanel p:cardsSlot) {
             panel.remove(p);
         }
@@ -36,6 +36,9 @@ public class CardsGroupPanel {
             CardPanel cardSlot = new CardPanel(c.getCardImage());
             cardSlot.setBackground(new Color(95,54,0));
             cardSlot.setBorder(BorderFactory.createEmptyBorder(0,1,0,1));
+            if(!isControlled) {
+                cardSlot.turn();
+            }
             panel.add(cardSlot);
             cardsSlot.add(cardSlot);
         }

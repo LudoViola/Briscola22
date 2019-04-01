@@ -1,10 +1,7 @@
 package GUI.frames;
 
 import GUI.buttons.ButtonCardImage;
-import GUI.panels.CardsGroupPanel;
-import GUI.panels.ImagePanel;
-import GUI.panels.LogPanel;
-import GUI.panels.TableCardPanel;
+import GUI.panels.*;
 import card_management.Card;
 import finals.MyColors;
 import game.players.ControlledPlayer;
@@ -12,11 +9,15 @@ import game.Table;
 import game.players.Player;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.DefaultFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.net.URL;
+import java.text.ParseException;
 
 
 public class GameScreen extends JFrame implements ActionListener {
@@ -43,6 +44,9 @@ public class GameScreen extends JFrame implements ActionListener {
     private String imageString;
     private Table table;
     private int higherBet;
+    private SpinnerNumberModel model;
+    private JPanel innerRightPanel;
+    JPanel innerLeftPanel;
 
     private final int MAX_WIDTH = 1450;
 
@@ -79,7 +83,7 @@ public class GameScreen extends JFrame implements ActionListener {
         rightPanel.setBackground(MyColors.brown);
         rightPanel.setPreferredSize(new Dimension(MAX_WIDTH/7,1000));
 
-        SpinnerNumberModel model = new SpinnerNumberModel(61,61,120,1);
+        model = new SpinnerNumberModel(61,61,120,2);
         betSpinner = new JSpinner(model);
         betSpinner.setPreferredSize(new Dimension(MAX_WIDTH/14,MAX_WIDTH/14));
         betSpinner.setBackground(MyColors.brown);
@@ -94,6 +98,18 @@ public class GameScreen extends JFrame implements ActionListener {
         jsEditor.getTextField().setBackground(MyColors.brown);
         jsEditor.getTextField().setForeground(Color.BLACK);
         jsEditor.getTextField().setFont(new Font("Courier",Font.BOLD,22));
+        JComponent comp = betSpinner.getEditor();
+        JFormattedTextField field = (JFormattedTextField) comp.getComponent(0);
+        DefaultFormatter formatter = (DefaultFormatter) field.getFormatter();
+        formatter.setCommitsOnValidEdit(true);
+        betSpinner.addChangeListener(e -> {
+            if((int)betSpinner.getValue()>79) {
+               model.setStepSize(1);
+            }
+            else {
+                model.setStepSize(2);
+            }
+        });
 
 
         JPanel betPanel = new JPanel();
@@ -130,17 +146,45 @@ public class GameScreen extends JFrame implements ActionListener {
 
         URL resource = getClass().getClassLoader().getResource( "resources/tableBackground.jpg" );
         tablePanel = new JPanel();
-        tablePanel.setPreferredSize(new Dimension(200,100));
+        tablePanel.setLayout(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createEmptyBorder(40,40,40,40));
         tablePanel.setBackground(Color.GREEN);
 
         innerTablePanel = new JPanel();
+        innerTablePanel.setBackground(Color.GREEN);
 
+        innerRightPanel = new JPanel();
+        innerRightPanel.setLayout(new GridLayout(2,1));
+        innerRightPanel.setBorder(BorderFactory.createEmptyBorder(0,100,0,0));
+        innerRightPanel.setBackground(MyColors.transparent);
+        innerRightPanel.setVisible(false);
+
+        TableIconPanel panel = new TableIconPanel();
+
+        TableIconPanel panel1 = new TableIconPanel();
+
+        innerRightPanel.add(panel);
+        innerRightPanel.add(panel1);
+
+        innerLeftPanel = new JPanel();
+        innerLeftPanel.setLayout(new GridLayout(2,1));
+        innerLeftPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,100));
+        innerLeftPanel.setBackground(MyColors.transparent);
+        innerLeftPanel.setVisible(false);
+
+        TableIconPanel panel2 = new TableIconPanel();
+
+        TableIconPanel panel3 = new TableIconPanel();
+
+        innerLeftPanel.add(panel2);
+        innerLeftPanel.add(panel3);
         tableCards = new TableCardPanel();
         innerTablePanel.add(tableCards.getPanel());
         innerTablePanel.setVisible(false);
 
-        tablePanel.add(innerTablePanel);
+        tablePanel.add(innerTablePanel,BorderLayout.CENTER);
+        tablePanel.add(innerLeftPanel,BorderLayout.WEST);
+        tablePanel.add(innerRightPanel,BorderLayout.EAST);
 
         playerCardZone = new JPanel();
         playerCardZone.setPreferredSize(new Dimension(200,200));
@@ -201,7 +245,7 @@ public class GameScreen extends JFrame implements ActionListener {
         //JOptionPane.showMessageDialog(this,s,"Classifica", JOptionPane.INFORMATION_MESSAGE);
         logPanel.update(c);
         try {
-            Thread.sleep(5000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -209,7 +253,7 @@ public class GameScreen extends JFrame implements ActionListener {
 
     public void displayHandWinner(Player p) {
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -239,7 +283,7 @@ public class GameScreen extends JFrame implements ActionListener {
 
 
     public void updatePlayerCards(Player player) {
-        cardsContainer.update(player.getHand());
+        cardsContainer.update(player.getHand(), player instanceof ControlledPlayer);
         revalidate();
         repaint();
         if(listenerEnabled) {
@@ -293,6 +337,7 @@ public class GameScreen extends JFrame implements ActionListener {
             bet = (Integer) betSpinner.getValue();
             if(bet > higherBet) {
                 synchronized (lock) {
+                    updateSpinner();
                     betDone = true;
                     lock.notifyAll();
                 }
@@ -320,6 +365,16 @@ public class GameScreen extends JFrame implements ActionListener {
         }
     }
 
+    public void updateSpinner() {
+        model.setMinimum(higherBet);
+        model.setValue(higherBet);
+        try {
+            betSpinner.commitEdit();
+        } catch (ParseException e1) {
+            e1.printStackTrace();
+        }
+    }
+
     public void setLabelText(Player p) {
         playerName.setText(p.getClass().getSimpleName()+"  " + p.getOrder());
     }
@@ -332,6 +387,8 @@ public class GameScreen extends JFrame implements ActionListener {
 
     public void setTableVisibility(boolean b) {
         innerTablePanel.setVisible(b);
+        innerLeftPanel.setVisible(b);
+        innerRightPanel.setVisible(b);
     }
 
     public void setExitButtonVisibility(boolean b) {

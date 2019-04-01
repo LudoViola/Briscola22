@@ -44,6 +44,8 @@ public class GameManagement {
         distributeCard();
         this.screen = new GameScreen(players.get(0), lock);
         bettingPlayers = new CopyOnWriteArrayList<>(players);
+        this.screen.pack();
+        this.screen.setLocationRelativeTo(null);
         this.screen.setVisible(false);
 
         this.screen.setTurnDone(false);
@@ -64,10 +66,6 @@ public class GameManagement {
                 p.sortHand();
                 if(p instanceof AIPlayerEasy) {
                     ((AIPlayerEasy) p).setCardsForSuit();
-                    System.out.println(p.getHand());
-                    for(int i = 0; i < 4; i++) {
-                        System.out.println(p.getHand().getCardsForSuit()[i]);
-                    }
                 }
                 switchScreen(p);
                 if (!(bettingPlayers.contains(p) && bettingPlayers.size() == 1)) {
@@ -105,6 +103,7 @@ public class GameManagement {
                             higherBet = bet;
                             screen.setHigherBet(higherBet);
                             startingPlayer = p.getOrder();
+                            screen.updateSpinner();
                             screen.displayBettingMove(p,bet);
                         }
                     } else if (bet == 0) {
@@ -285,6 +284,8 @@ public class GameManagement {
 
     private void goToMenuScreen() {
         NewGameScreen screen = new NewGameScreen(lock);
+        screen.getFrame().pack();
+        screen.getFrame().setLocationRelativeTo(null);
         screen.getFrame().setVisible(true);
         synchronized (lock) {
             while (!screen.isGameChosen()) {

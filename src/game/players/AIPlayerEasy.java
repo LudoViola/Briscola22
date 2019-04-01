@@ -54,6 +54,7 @@ public class AIPlayerEasy extends AIPlayer {
             }
             j++;
         }
+
         ArrayList<Card> cards = new ArrayList<>();
         for (Card c:deck.getDeck() ) {
             if(c.getSeme().equals(briscola)) {
@@ -70,28 +71,46 @@ public class AIPlayerEasy extends AIPlayer {
         if(getCardToWin() !=null) {
             return getCardToWin();
         }else {
-            return this.hand.getCards().get(random.nextInt(this.hand.getCards().size()));
+            if(getLiscio()!=null) {
+                return getLiscio();
+            }
+            else {
+                return this.hand.getCards().get(random.nextInt(this.hand.getCards().size()));
+            }
         }
+    }
+
+    private Card getLiscio() {
+        Card card = null;
+        for (Card c:this.hand.getCards()) {
+           if(c.getPoints()==0 && c.getSeme()!=briscola) {
+               card = c;
+           }
+        }
+        return card;
     }
 
     private Card getCardToWin() {
         Card d = null;
-        for (Card c:this.hand.getCards()) {
-            if(c.getSeme() == briscola && tempWinningCard.getSeme() == briscola && c.isGreaterStessoSeme(tempWinningCard)) {
-                d = c;
-            break;
-            }
-            else if (c.getSeme() == tempWinningCard.getSeme() && c.isGreaterStessoSeme(tempWinningCard)) {
-            d = c;
-            break;
-            }
-            else {
-                if(c.getSeme() == briscola && tempWinningCard.getSeme()!=briscola) {
+        if(tempWinningCard!=null) {
+            for (Card c : this.hand.getCards()) {
+                if (c.getSeme() == briscola && tempWinningCard.getSeme() == briscola && c.isGreaterStessoSeme(tempWinningCard)) {
                     d = c;
                     break;
+                } else if (c.getSeme() == tempWinningCard.getSeme() && c.isGreaterStessoSeme(tempWinningCard)) {
+                    d = c;
+                    break;
+                } else {
+                    if (c.getSeme() == briscola && tempWinningCard.getSeme() != briscola) {
+                        d = c;
+                        break;
+                    }
                 }
             }
+            return d;
         }
-        return d;
+        else {
+            return null;
+        }
     }
 }

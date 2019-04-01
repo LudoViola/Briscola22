@@ -2,7 +2,6 @@ package GUI.panels;
 
 import GUI.buttons.ButtonCardImage;
 import card_management.Card;
-import game.players.ControlledPlayer;
 import game.players.Player;
 
 import javax.swing.*;

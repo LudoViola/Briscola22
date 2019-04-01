@@ -28,7 +28,7 @@ public class NewGameScreen implements ActionListener {
 
     public NewGameScreen(Object lock) {
         frame.setTitle("Briscola in 5");
-        frame.setSize(1000,800);
+        frame.setSize(1000,1200);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
 
