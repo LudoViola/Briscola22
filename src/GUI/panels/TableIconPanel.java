@@ -12,6 +12,8 @@ import java.net.URL;
 public class TableIconPanel extends JPanel {
     private JLabel image;
     private JLabel playerName;
+    private JLabel turnPointer;
+
     public TableIconPanel() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(50,0,50,0));
@@ -31,5 +33,9 @@ public class TableIconPanel extends JPanel {
 
         add(image,BorderLayout.CENTER);
         add(playerName,BorderLayout.PAGE_START);
+    }
+
+    public void setPlayerName(String name) {
+        playerName.setText(name);
     }
 }

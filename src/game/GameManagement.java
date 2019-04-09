@@ -190,7 +190,7 @@ public class GameManagement {
             if(teamCaller.contains(p)) {
                 teamCallerScore+=p.getScore();
             }
-            else {
+            else if(teamPopolo.contains(p)) {
                 teamPopoloScore+=p.getScore();
             }
             s.append("\n").append(i).append(". ").append(p.getPlayerID()).append(" Score: ").append(p.getScore());
@@ -383,10 +383,11 @@ public class GameManagement {
             }
             else if(p.getHand().getCards().contains(fellowCard)) {
                 teamCaller.add(p);
-                p.setRole(PlayerRole.POPOLO);
+                p.setRole(PlayerRole.FELLOW);
             }
             else {
                 teamPopolo.add(p);
+                p.setRole(PlayerRole.POPOLO);
             }
         }
     }
@@ -408,4 +409,6 @@ public class GameManagement {
                 "players=" + players +
                 '}';
     }
+
+
 }

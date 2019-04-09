@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
 
 
 public class GameScreen extends JFrame implements ActionListener {
@@ -47,6 +48,7 @@ public class GameScreen extends JFrame implements ActionListener {
     private SpinnerNumberModel model;
     private JPanel innerRightPanel;
     JPanel innerLeftPanel;
+    private ArrayList<TableIconPanel> iconPanels;
 
     private final int MAX_WIDTH = 1450;
 
@@ -158,10 +160,13 @@ public class GameScreen extends JFrame implements ActionListener {
         innerRightPanel.setBorder(BorderFactory.createEmptyBorder(0,100,0,0));
         innerRightPanel.setBackground(MyColors.transparent);
         innerRightPanel.setVisible(false);
+        iconPanels = new ArrayList<>();
 
         TableIconPanel panel = new TableIconPanel();
+        iconPanels.add(panel);
 
         TableIconPanel panel1 = new TableIconPanel();
+        iconPanels.add(panel1);
 
         innerRightPanel.add(panel);
         innerRightPanel.add(panel1);
@@ -173,8 +178,10 @@ public class GameScreen extends JFrame implements ActionListener {
         innerLeftPanel.setVisible(false);
 
         TableIconPanel panel2 = new TableIconPanel();
+        iconPanels.add(panel2);
 
         TableIconPanel panel3 = new TableIconPanel();
+        iconPanels.add(panel3);
 
         innerLeftPanel.add(panel2);
         innerLeftPanel.add(panel3);
@@ -329,6 +336,9 @@ public class GameScreen extends JFrame implements ActionListener {
 
     public String getImageString() {
         return imageString;
+    }
+
+    public void addNameOnIcon() {
     }
 
     @Override

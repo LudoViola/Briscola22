@@ -60,9 +60,6 @@ public class Card implements Comparable<Card> {
 
     @Override
     public int compareTo(Card o) {
-
-
-
         if (this.seme.ordinal() == o.getSeme().ordinal()) {
             if (this.value.ordinal() > o.getValue().ordinal()) {
                 return 1;
