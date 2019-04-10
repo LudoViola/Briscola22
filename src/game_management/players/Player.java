@@ -1,7 +1,7 @@
-package game.players;
+package game_management.players;
 
 import card_management.Card;
-import game.Hand;
+import card_management.Hand;
 
 import java.util.ArrayList;
 

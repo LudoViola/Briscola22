@@ -1,19 +1,17 @@
-package game;
+package game_management;
 
 import GUI.frames.ChoseFellowScreen;
 import GUI.frames.GameScreen;
 import GUI.frames.NewGameScreen;
-import card_management.Card;
-import card_management.Deck;
-import card_management.Semi;
+import card_management.*;
 import finals.Visibility;
-import game.players.*;
+import game_management.players.*;
 
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
-public class GameManagement {
+public class LocalGame {
     private ArrayList<Player> players;
     private ArrayList<Player> teamCaller;
     private ArrayList<Player> teamPopolo;
@@ -22,15 +20,18 @@ public class GameManagement {
     private Card fellowCard;
     private int startingPlayer;
     private int higherBet;
+    private ControlledPlayer playerUser;
     private CopyOnWriteArrayList<Player> bettingPlayers;
     private boolean betAnswer;
     private GameScreen screen;
     private final Object lock;
     private boolean isFirst;
+    private boolean isMultiplayer;
     private GameType gameType;
 
-    public GameManagement() {
-        this.lock = new Object();
+    public LocalGame(Object lock) {
+        this.lock = lock;
+        isMultiplayer = false;
     }
 
     private void resetGameEnvironment() {
@@ -54,7 +55,6 @@ public class GameManagement {
     }
 
     public void startGame() {
-        goToMenuScreen();
         bettingTurn();
         chooseFellow();
         playPhase();
@@ -124,7 +124,7 @@ public class GameManagement {
             }
         }
         if(higherBet == 60) {
-            String b = "Start a new game";
+            String b = "Start a new game_management";
             screen.diplayBettingWinner(b);
             resetGameEnvironment();
             startGame();
@@ -278,13 +278,13 @@ public class GameManagement {
                 }
             }
             screen.setVisible(false);
-            resetGameEnvironment();
+            goToMenuScreen();
             startGame();
         }
 
     }
 
-    private void goToMenuScreen() {
+    public void goToMenuScreen() {
         NewGameScreen screen = new NewGameScreen(lock);
         screen.getFrame().pack();
         screen.getFrame().setLocationRelativeTo(null);
@@ -298,12 +298,12 @@ public class GameManagement {
                 }
             }
             this.gameType = screen.getGameType();
-            resetGameEnvironment();
-
-
-
+            if(gameType!=GameType.MULTIPLAYER) {
+                resetGameEnvironment();
+                this.screen.setVisible(true);
+                startGame();
+            }
         }
-        this.screen.setVisible(true);
     }
 
     private void switchScreen(Player p) {
@@ -323,16 +323,6 @@ public class GameManagement {
                     players.add(player);
                 }
                 break;
-            case PLAYERVSAI:
-                ControlledPlayer player = new ControlledPlayer(0);
-                player.setCurrentBet(0);
-                players.add(player);
-                for(int i = 1; i < 5; i++) {
-                    AIPlayer player1 = new AIPlayerRandom(i);
-                    player1.setCurrentBet(0);
-                    players.add(player1);
-                }
-                break;
             case SIMULATED:
                 for(int i = 0; i < 2; i++) {
                     AIPlayer player1 = new AIPlayerEasy(i);
@@ -348,6 +338,7 @@ public class GameManagement {
                 break;
             case EASY:
                 ControlledPlayer player2 = new ControlledPlayer(0);
+                playerUser = player2;
                 player2.setCurrentBet(0);
                 players.add(player2);
                 for(int i = 1; i < 5; i++) {
@@ -404,9 +395,13 @@ public class GameManagement {
         }
     }
 
+    public boolean isMultiplayer() {
+        return isMultiplayer;
+    }
+
     @Override
     public String toString() {
-        return "GameManagement{" +
+        return "LocalGame{" +
                 "players=" + players +
                 '}';
     }

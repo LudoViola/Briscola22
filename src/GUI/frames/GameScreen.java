@@ -4,23 +4,18 @@ import GUI.buttons.ButtonCardImage;
 import GUI.panels.*;
 import card_management.Card;
 import finals.MyColors;
-import game.GameType;
-import game.players.ControlledPlayer;
-import game.Table;
-import game.players.Player;
+import game_management.GameType;
+import game_management.players.ControlledPlayer;
+import card_management.Table;
+import game_management.players.Player;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class GameScreen extends JFrame implements ActionListener {

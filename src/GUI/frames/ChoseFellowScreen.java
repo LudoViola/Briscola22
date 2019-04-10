@@ -3,8 +3,7 @@ package GUI.frames;
 import GUI.panels.CardPanel;
 import card_management.Card;
 import card_management.Deck;
-import game.players.ControlledPlayer;
-import game.players.Player;
+import game_management.players.Player;
 
 import javax.swing.*;
 import java.awt.*;

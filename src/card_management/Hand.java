@@ -1,12 +1,6 @@
-package game;
+package card_management;
 
-import card_management.Card;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Hand {
     private int[] cardsForSuit = {0,0,0,0};

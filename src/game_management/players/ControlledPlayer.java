@@ -1,9 +1,4 @@
-package game.players;
-
-import card_management.Card;
-import game.Hand;
-
-import java.util.ArrayList;
+package game_management.players;
 
 public class ControlledPlayer extends Player  {
 

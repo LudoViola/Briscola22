@@ -2,7 +2,7 @@ package GUI.frames;
 
 import GUI.panels.ImagePanel;
 import finals.MyColors;
-import game.GameType;
+import game_management.GameType;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,7 +19,7 @@ public class NewGameScreen implements ActionListener {
     ImagePanel backgroundPanel;
     private JLabel logo;
     private JButton startControlledGameButton;
-    private JButton startPlayerVSAiGameButton;
+    private JButton startMultiplayerGameButton;
     private JButton startPlayerVSEasyGameButton;
     private JButton startSimulatedGameButton;
     private boolean gameChosen;
@@ -55,20 +55,22 @@ public class NewGameScreen implements ActionListener {
         startSimulatedGameButton.setBorder(new RoundedBorder(10));
         startSimulatedGameButton.addActionListener(this);
 
-        startPlayerVSAiGameButton = new JButton("Start Player Vs Random Game");
-        startPlayerVSAiGameButton.setBackground(Color.orange);
-        startPlayerVSAiGameButton.setBorder(new RoundedBorder(10));
-        startPlayerVSAiGameButton.addActionListener(this);
-
         startPlayerVSEasyGameButton = new JButton("Start Easy");
         startPlayerVSEasyGameButton.setBackground(Color.orange);
         startPlayerVSEasyGameButton.setBorder(new RoundedBorder(10));
         startPlayerVSEasyGameButton.addActionListener(this);
 
+        startMultiplayerGameButton = new JButton("Start Multiplayer Game");
+        startMultiplayerGameButton.setBackground(Color.orange);
+        startMultiplayerGameButton.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
+        startMultiplayerGameButton.setBorder(new RoundedBorder(10));
+        startMultiplayerGameButton.addActionListener(this);
+
         buttonPanel.add(startSimulatedGameButton);
         buttonPanel.add(startPlayerVSEasyGameButton);
-        buttonPanel.add(startPlayerVSAiGameButton);
         buttonPanel.add(startControlledGameButton);
+        buttonPanel.add(startMultiplayerGameButton);
+
 
         logo = new JLabel();
         logo.setIcon(new ImageIcon(addIcon("resources/logo.png")));
@@ -102,12 +104,12 @@ public class NewGameScreen implements ActionListener {
             gameType = GameType.SIMULATED;
             runGame();
         }
-        else if(e.getSource() == startPlayerVSAiGameButton) {
-            gameType = GameType.PLAYERVSAI;
-            runGame();
-        }
         else if(e.getSource() == startPlayerVSEasyGameButton) {
             gameType = GameType.EASY;
+            runGame();
+        }
+        else if(e.getSource() == startMultiplayerGameButton) {
+            gameType = GameType.MULTIPLAYER;
             runGame();
         }
     }

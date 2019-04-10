@@ -1,7 +1,7 @@
 package GUI.panels;
 
 import card_management.Card;
-import game.Hand;
+import card_management.Hand;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,22 +28,21 @@ public class CardsGroupPanel {
     }
 
     public void update(Hand hand,boolean isControlled) {
-        for (CardPanel p:cardsSlot) {
-            panel.remove(p);
-        }
-        cardsSlot.clear();
-        for (Card c:hand.getCards()) {
-            CardPanel cardSlot = new CardPanel(c.getCardImage());
-            cardSlot.setBackground(new Color(95,54,0));
-            cardSlot.setBorder(BorderFactory.createEmptyBorder(0,1,0,1));
-            if(!isControlled) {
-                cardSlot.turn();
+        if(isControlled) {
+            for (CardPanel p : cardsSlot) {
+                panel.remove(p);
             }
-            panel.add(cardSlot);
-            cardsSlot.add(cardSlot);
+            cardsSlot.clear();
+            for (Card c : hand.getCards()) {
+                CardPanel cardSlot = new CardPanel(c.getCardImage());
+                cardSlot.setBackground(new Color(95, 54, 0));
+                cardSlot.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
+                panel.add(cardSlot);
+                cardsSlot.add(cardSlot);
+            }
+            panel.revalidate();
+            panel.repaint();
         }
-        panel.revalidate();
-        panel.repaint();
     }
 
     public JPanel getPanel() {

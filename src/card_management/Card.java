@@ -1,7 +1,7 @@
 package card_management;
 
 
-import game.players.PlayerRole;
+import game_management.players.PlayerRole;
 
 import java.awt.*;
 

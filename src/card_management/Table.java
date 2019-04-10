@@ -1,8 +1,6 @@
-package game;
+package card_management;
 
-import card_management.Card;
-import card_management.Semi;
-import game.players.Player;
+import game_management.players.Player;
 
 import java.util.ArrayList;
 
