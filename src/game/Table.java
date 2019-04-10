@@ -41,7 +41,6 @@ public class Table {
                 }
             }
         }
-        System.out.println(winningCard);
         card.setOwner(player.getRole());
         this.cards.add(card);
     }

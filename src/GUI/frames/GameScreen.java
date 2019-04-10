@@ -4,6 +4,7 @@ import GUI.buttons.ButtonCardImage;
 import GUI.panels.*;
 import card_management.Card;
 import finals.MyColors;
+import game.GameType;
 import game.players.ControlledPlayer;
 import game.Table;
 import game.players.Player;
@@ -19,6 +20,7 @@ import java.awt.event.KeyEvent;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class GameScreen extends JFrame implements ActionListener {
@@ -49,6 +51,7 @@ public class GameScreen extends JFrame implements ActionListener {
     private JPanel innerRightPanel;
     JPanel innerLeftPanel;
     private ArrayList<TableIconPanel> iconPanels;
+    private GameType gameType;
 
     private final int MAX_WIDTH = 1450;
 
@@ -146,7 +149,7 @@ public class GameScreen extends JFrame implements ActionListener {
         betPanel.add(betSpinner);
         betPanel.add(buttonPass);
 
-        URL resource = getClass().getClassLoader().getResource( "resources/tableBackground.jpg" );
+        //URL resource = getClass().getClassLoader().getResource( "resources/tableBackground.jpg" );
         tablePanel = new JPanel();
         tablePanel.setLayout(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createEmptyBorder(40,40,40,40));
@@ -168,8 +171,8 @@ public class GameScreen extends JFrame implements ActionListener {
         TableIconPanel panel1 = new TableIconPanel();
         iconPanels.add(panel1);
 
-        innerRightPanel.add(panel);
         innerRightPanel.add(panel1);
+        innerRightPanel.add(panel);
 
         innerLeftPanel = new JPanel();
         innerLeftPanel.setLayout(new GridLayout(2,1));
@@ -243,6 +246,10 @@ public class GameScreen extends JFrame implements ActionListener {
         logPanel.update(s);
     }
 
+    public void setGameType(GameType gameType) {
+        this.gameType = gameType;
+    }
+
     public void diplayBettingWinner(String s) {
         logPanel.update(s);
         //JOptionPane.showMessageDialog(this,s,"The Winner", JOptionPane.INFORMATION_MESSAGE);
@@ -291,8 +298,8 @@ public class GameScreen extends JFrame implements ActionListener {
 
     public void updatePlayerCards(Player player) {
         cardsContainer.update(player.getHand(), player instanceof ControlledPlayer);
-        revalidate();
-        repaint();
+        //revalidate();
+        //repaint();
         if(listenerEnabled) {
             setActionListener();
         }
@@ -338,7 +345,37 @@ public class GameScreen extends JFrame implements ActionListener {
         return imageString;
     }
 
-    public void addNameOnIcon() {
+    public void addNameOnIcon(ArrayList<Player> players) {
+        if(gameType.equals(GameType.SIMULATED) || gameType.equals(GameType.CONTROLLED)) {
+            int i = 0;
+            for (TableIconPanel panel : iconPanels) {
+                panel.setPlayerName(players.get(i + 1).getPlayerID());
+                i++;
+            }
+        }
+        else {
+            int i = 0;
+            for (TableIconPanel panel : iconPanels) {
+                if(!(players.get(i)instanceof ControlledPlayer)) {
+                    panel.setPlayerName(players.get(i).getPlayerID());
+                }
+                else {
+                    i++;
+                    panel.setPlayerName(players.get(i).getPlayerID());
+                }
+                i++;
+            }
+        }
+    }
+
+    public void showYourTurn(String playerId, boolean visibility) {
+        for (TableIconPanel pane:iconPanels) {
+            if(pane.getPlayerName().getText().equals(playerId)) {
+                pane.setTurnPointer(visibility);
+            }
+        }
+        revalidate();
+        repaint();
     }
 
     @Override

@@ -6,6 +6,7 @@ import GUI.frames.NewGameScreen;
 import card_management.Card;
 import card_management.Deck;
 import card_management.Semi;
+import finals.Visibility;
 import game.players.*;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class GameManagement {
         this.screen.pack();
         this.screen.setLocationRelativeTo(null);
         this.screen.setVisible(false);
+        this.screen.setGameType(gameType);
 
         this.screen.setTurnDone(false);
     }
@@ -202,7 +204,7 @@ public class GameManagement {
     }
 
     private void playPhase() {
-
+        screen.addNameOnIcon(players);
         int hands = 0;
         Card c = null;
         Card winningCard = null;
@@ -216,6 +218,7 @@ public class GameManagement {
                 i++;
                 screen.setTableVisibility(true);
                 switchScreen(p);
+                screen.showYourTurn(p.getPlayerID(), Visibility.VISIBLE);
                 if(p instanceof ControlledPlayer) {
                     synchronized (lock) {
                         while (!screen.isTurnDone()) {
@@ -247,6 +250,7 @@ public class GameManagement {
                 hand.addCard(c);
                 screen.updateTableCards(c);
                 screen.setTurnDone(false);
+                screen.showYourTurn(p.getPlayerID(), Visibility.INVISIBLE);
             }
             hands++;
             for (Player p:players) {
@@ -255,14 +259,12 @@ public class GameManagement {
                     screen.displayHandWinner(p);
                 }
             }
-            System.out.println(players);
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             gameOrder(players,table.getStartingPlayer());
-            System.out.println(players);
 
         }
         screen.diplayScoreBoard(makeScoreBoard());
@@ -375,19 +377,18 @@ public class GameManagement {
     private void createTeams() {
         this.teamCaller = new ArrayList<>();
         this.teamPopolo = new ArrayList<>();
-
+        teamCaller.add(players.get(0));
+        players.get(0).setRole(PlayerRole.CALLER);
         for (Player p:players) {
-            if(p.getOrder() == 0) {
-                teamCaller.add(p);
-                p.setRole(PlayerRole.CALLER);
-            }
-            else if(p.getHand().getCards().contains(fellowCard)) {
+            if(p.getHand().getCards().contains(fellowCard)) {
                 teamCaller.add(p);
                 p.setRole(PlayerRole.FELLOW);
             }
             else {
-                teamPopolo.add(p);
-                p.setRole(PlayerRole.POPOLO);
+                if(!p.equals(players.get(0))) {
+                    teamPopolo.add(p);
+                    p.setRole(PlayerRole.POPOLO);
+                }
             }
         }
     }

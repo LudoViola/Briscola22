@@ -1,6 +1,7 @@
 package GUI.panels;
 
 import finals.MyColors;
+import finals.Visibility;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -30,12 +31,23 @@ public class TableIconPanel extends JPanel {
         }
         image.setIcon(new ImageIcon(body));
         playerName = new JLabel();
+        turnPointer = new JLabel("YOUR TURN");
+        turnPointer.setVisible(Visibility.INVISIBLE);
 
         add(image,BorderLayout.CENTER);
         add(playerName,BorderLayout.PAGE_START);
+        add(turnPointer,BorderLayout.PAGE_END);
     }
 
     public void setPlayerName(String name) {
         playerName.setText(name);
+    }
+
+    public void setTurnPointer(boolean visibility) {
+        turnPointer.setVisible(visibility);
+    }
+
+    public JLabel getPlayerName() {
+        return playerName;
     }
 }
