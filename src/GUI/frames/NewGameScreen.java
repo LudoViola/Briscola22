@@ -22,8 +22,9 @@ public class NewGameScreen implements ActionListener {
     private JButton startMultiplayerGameButton;
     private JButton startPlayerVSEasyGameButton;
     private JButton startSimulatedGameButton;
+    JPanel buttonPanel;
     private boolean gameChosen;
-    private final Object lock;
+    final Object lock;
     private GameType gameType;
 
     public NewGameScreen(Object lock) {
@@ -37,7 +38,7 @@ public class NewGameScreen implements ActionListener {
         backgroundPanel.setSize(frame.getSize());
         backgroundPanel.setLayout(new FlowLayout(FlowLayout.CENTER,300,20));
 
-        JPanel buttonPanel = new JPanel();
+        buttonPanel = new JPanel();
         buttonPanel.setBackground(MyColors.transparent);
         buttonPanel.setPreferredSize(new Dimension(300,400));
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER,300,20));
@@ -57,6 +58,7 @@ public class NewGameScreen implements ActionListener {
 
         startPlayerVSEasyGameButton = new JButton("Start Easy");
         startPlayerVSEasyGameButton.setBackground(Color.orange);
+        startPlayerVSEasyGameButton.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
         startPlayerVSEasyGameButton.setBorder(new RoundedBorder(10));
         startPlayerVSEasyGameButton.addActionListener(this);
 

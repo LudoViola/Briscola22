@@ -4,6 +4,7 @@ import GUI.buttons.ButtonCardImage;
 import GUI.panels.*;
 import card_management.Card;
 import finals.MyColors;
+import finals.MyFonts;
 import game_management.GameType;
 import game_management.players.ControlledPlayer;
 import card_management.Table;
@@ -97,7 +98,7 @@ public class GameScreen extends JFrame implements ActionListener {
         JSpinner.NumberEditor jsEditor = (JSpinner.NumberEditor) betSpinner.getEditor();
         jsEditor.getTextField().setBackground(MyColors.brown);
         jsEditor.getTextField().setForeground(Color.BLACK);
-        jsEditor.getTextField().setFont(new Font("Courier",Font.BOLD,22));
+        jsEditor.getTextField().setFont(MyFonts.COURIER);
         JComponent comp = betSpinner.getEditor();
         JFormattedTextField field = (JFormattedTextField) comp.getComponent(0);
         DefaultFormatter formatter = (DefaultFormatter) field.getFormatter();

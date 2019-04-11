@@ -303,6 +303,9 @@ public class LocalGame {
                 this.screen.setVisible(true);
                 startGame();
             }
+            else {
+                isMultiplayer = true;
+            }
         }
     }
 
