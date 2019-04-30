@@ -206,6 +206,7 @@ public class LocalGame {
 
     private void playPhase() {
         screen.addNameOnIcon(players);
+        screen.setBettingTurn(false);
         int hands = 0;
         Card c = null;
         Card winningCard = null;
