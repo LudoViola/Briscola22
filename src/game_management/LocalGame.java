@@ -133,7 +133,7 @@ public class LocalGame {
         String s = ("Starting player " + startingPlayer + "with bet: " + higherBet);
         screen.diplayBettingWinner(s);
         try {
-            Thread.sleep(1500);
+            Thread.sleep(animationSpeed);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

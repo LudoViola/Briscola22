@@ -244,6 +244,9 @@ public class GameScreen extends JFrame implements ActionListener {
 
     public void setGameType(GameType gameType) {
         this.gameType = gameType;
+        if(gameType.equals(GameType.SIMULATED)) {
+            setBetAreaVisibility(false);
+        }
     }
 
     public void diplayBettingWinner(String s) {
@@ -298,6 +301,12 @@ public class GameScreen extends JFrame implements ActionListener {
         //repaint();
         if(listenerEnabled) {
             setActionListener();
+        }
+        if(!(player instanceof ControlledPlayer)) {
+            setBetAreaVisibility(false);
+        }
+        else {
+            setBetAreaVisibility(true);
         }
     }
 
