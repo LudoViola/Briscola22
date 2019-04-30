@@ -70,7 +70,7 @@ public class GameScreen extends JFrame implements ActionListener {
 
         setTitle("Briscola in 5 Partita Simulata");
         setSize(MAX_WIDTH,800);
-        setResizable(false);
+        setResizable(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 

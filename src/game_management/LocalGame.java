@@ -28,6 +28,7 @@ public class LocalGame {
     private boolean isFirst;
     private boolean isMultiplayer;
     private GameType gameType;
+    private  final int animationSpeed = 800;
 
     public LocalGame(Object lock) {
         this.lock = lock;
@@ -85,7 +86,7 @@ public class LocalGame {
                     }
                     else if(p instanceof AIPlayer) {
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(animationSpeed);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -114,7 +115,7 @@ public class LocalGame {
                         bettingPlayers.remove(p);
                     }
                     try {
-                        Thread.sleep(1500);
+                        Thread.sleep(animationSpeed);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -159,7 +160,7 @@ public class LocalGame {
         }
         else if(players.get(0) instanceof AIPlayer) {
             try {
-                Thread.sleep(1500);
+                Thread.sleep(animationSpeed);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -233,7 +234,7 @@ public class LocalGame {
                 }
                 else if(p instanceof AIPlayer) {
                     try {
-                        Thread.sleep(1500);
+                        Thread.sleep(animationSpeed);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -260,7 +261,7 @@ public class LocalGame {
                 }
             }
             try {
-                Thread.sleep(2000);
+                Thread.sleep(animationSpeed);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
