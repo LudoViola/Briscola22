@@ -14,14 +14,16 @@ public class UserLoginScreen extends NewGameScreen {
     private JTextField txtUsername;
     private String username;
     private boolean isLogged;
+    private JPanel loginPanel;
+    private JLabel label;
 
     public UserLoginScreen(Object lock) {
         super(lock);
         this.buttonPanel.setVisible(false);
-        JPanel panel = new JPanel();
-        panel.setBackground(MyColors.transparent);
-        panel.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
-        panel.setBorder(new RoundedBorder(10));
+        loginPanel = new JPanel();
+        loginPanel.setBackground(MyColors.transparent);
+        loginPanel.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
+        loginPanel.setBorder(new RoundedBorder(10));
         JLabel lblUsername = new JLabel("Username:");
         lblUsername.setForeground(Color.BLACK);
         lblUsername.setFont(MyFonts.COURIER);
@@ -36,14 +38,20 @@ public class UserLoginScreen extends NewGameScreen {
         btnLogin.addActionListener(this);
         btnCancel = new JButton("Cancel");
 
+        label = new JLabel("WAITING FOR PLAYERS...");
+        label.setForeground(Color.BLACK);
+        label.setFont(MyFonts.COURIER);
+        label.setVisible(false);
 
-        panel.add(lblUsername);
-        panel.add(txtUsername);
-      //  panel.add(lblPassword);
-       // panel.add(txtPassword);
 
-        this.backgroundPanel.add(panel);
+        loginPanel.add(lblUsername);
+        loginPanel.add(txtUsername);
+      //  loginPanel.add(lblPassword);
+       // loginPanel.add(txtPassword);
+
+        this.backgroundPanel.add(loginPanel);
         this.backgroundPanel.add(btnLogin);
+        this.backgroundPanel.add(label);
 
         isLogged = false;
     }
@@ -65,5 +73,11 @@ public class UserLoginScreen extends NewGameScreen {
 
     public boolean isLogged() {
         return isLogged;
+    }
+
+    public void setLoginPanelVisibility(boolean visibility) {
+        loginPanel.setVisible(visibility);
+        btnLogin.setVisible(visibility);
+        label.setVisible(!visibility);
     }
 }

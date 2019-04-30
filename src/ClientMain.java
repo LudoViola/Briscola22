@@ -9,6 +9,7 @@ import java.net.Socket;
 public class ClientMain {
     private final static Object lock = new Object();
     private static String name;
+    private static boolean isGameRoomReady = false;
 
     public static void main(String[] args) {
 
@@ -27,17 +28,27 @@ public class ClientMain {
                 }
             }
             name = loginScreen.getUsername();
-            loginScreen.getFrame().dispose();
+            loginScreen.setLoginPanelVisibility(false);
 
                 try {
-                    runClient(name);
+                    login(name);
                 } catch (IOException | ClassNotFoundException | InterruptedException e) {
                     e.printStackTrace();
                 }
+
+            synchronized (lock) {
+                while (!isGameRoomReady) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
     }
 
-    private static void runClient(String name) throws IOException, ClassNotFoundException, InterruptedException {
+    private static void login(String name) throws IOException, ClassNotFoundException, InterruptedException {
         InetAddress host = InetAddress.getLocalHost();
         Socket socket = null;
         ObjectOutputStream oos = null;
@@ -51,10 +62,16 @@ public class ClientMain {
             //read the server response message
             ois = new ObjectInputStream(socket.getInputStream());
             String message = (String) ois.readObject();
-            System.out.println("Message: " + message);
+            if(message.equals("ready")) {
+                System.out.println("ready");
+            }
+            else {
+                System.out.println("Message: " + message);
+            }
             //close resources
             ois.close();
             oos.close();
             Thread.sleep(100);
+
     }
 }
