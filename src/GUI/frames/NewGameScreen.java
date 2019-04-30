@@ -28,9 +28,9 @@ public class NewGameScreen implements ActionListener {
     private GameType gameType;
 
     public NewGameScreen(Object lock) {
-        frame.setTitle("Briscola in 5");
+        frame.setTitle("Briscola chiamata");
         frame.setSize(1000,1200);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
 
         backgroundPanel = new ImagePanel(addIcon("resources/tableBackground.jpg"));
