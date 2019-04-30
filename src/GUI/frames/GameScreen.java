@@ -36,6 +36,7 @@ public class GameScreen extends JFrame implements ActionListener {
     private boolean turnDone;
     private boolean gameEnded;
     private boolean listenerEnabled;
+    private boolean bettingTurn;
     private int bet;
     private JButton buttonPass;
     private JSpinner betSpinner;
@@ -231,6 +232,7 @@ public class GameScreen extends JFrame implements ActionListener {
 
         betDone = false;
         turnDone = false;
+        bettingTurn = true;
         gameEnded = false;
         listenerEnabled = false;
         bet = 0;
@@ -302,11 +304,12 @@ public class GameScreen extends JFrame implements ActionListener {
         if(listenerEnabled) {
             setActionListener();
         }
-        if(!(player instanceof ControlledPlayer)) {
-            setBetAreaVisibility(false);
-        }
-        else {
-            setBetAreaVisibility(true);
+        if(bettingTurn) {
+            if (!(player instanceof ControlledPlayer)) {
+                setBetAreaVisibility(false);
+            } else {
+                setBetAreaVisibility(true);
+            }
         }
     }
 
@@ -451,5 +454,7 @@ public class GameScreen extends JFrame implements ActionListener {
         cardsContainer.setActionListener(this);
     }
 
-
+    public void setBettingTurn(boolean bettingTurn) {
+        this.bettingTurn = bettingTurn;
+    }
 }
