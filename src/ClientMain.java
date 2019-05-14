@@ -10,6 +10,9 @@ public class ClientMain {
     private final static Object lock = new Object();
     private static String name;
     private static boolean isGameRoomReady = false;
+    private static ObjectInputStream ois;
+    private static Socket socket;
+    private final static int port = 9876;
 
     public static void main(String[] args) {
 
@@ -32,10 +35,11 @@ public class ClientMain {
 
                 try {
                     login(name);
+                    waitForGameReady();
                 } catch (IOException | ClassNotFoundException | InterruptedException e) {
                     e.printStackTrace();
                 }
-
+/*
             synchronized (lock) {
                 while (!isGameRoomReady) {
                     try {
@@ -44,17 +48,31 @@ public class ClientMain {
                         e.printStackTrace();
                     }
                 }
+            }*/
+        }
+    }
+
+    private static void waitForGameReady() throws IOException, ClassNotFoundException {
+        while (true) {
+
+            if(socket.isConnected()) {
+                ois = new ObjectInputStream(socket.getInputStream());
+                String message = (String) ois.readObject();
+                if (message.equals("ciaone")) {
+                    System.out.println(message);
+                    break;
+                }
             }
         }
     }
 
     private static void login(String name) throws IOException, ClassNotFoundException, InterruptedException {
         InetAddress host = InetAddress.getLocalHost();
-        Socket socket = null;
+        socket = null;
         ObjectOutputStream oos = null;
-        ObjectInputStream ois = null;
+        ois = null;
             //establish socket connection to server
-            socket = new Socket(host.getHostName(), 9876);
+            socket = new Socket(host.getHostName(), port);
             //write to socket using ObjectOutputStream
             oos = new ObjectOutputStream(socket.getOutputStream());
             System.out.println("Sending request to Socket Server");
@@ -69,8 +87,8 @@ public class ClientMain {
                 System.out.println("Message: " + message);
             }
             //close resources
-            ois.close();
-            oos.close();
+            //ois.close();
+            //oos.close();
             Thread.sleep(100);
 
     }

@@ -42,15 +42,14 @@ public class GameScreen extends JFrame implements ActionListener {
     private JSpinner betSpinner;
     private final Object lock;
     private String imageString;
-    private Table table;
     private int higherBet;
     private SpinnerNumberModel model;
     private JPanel innerRightPanel;
-    JPanel innerLeftPanel;
+    private JPanel innerLeftPanel;
     private ArrayList<TableIconPanel> iconPanels;
     private GameType gameType;
 
-    private final int MAX_WIDTH = 1450;
+    private final int MAX_WIDTH = 1300;
 
 
     public GameScreen(Player firstPlayer, Object lock) throws HeadlessException {
@@ -70,8 +69,8 @@ public class GameScreen extends JFrame implements ActionListener {
 
 
         setTitle("Briscola in 5 Partita Simulata");
-        setSize(MAX_WIDTH,800);
-        setResizable(true);
+        setSize(MAX_WIDTH,700);
+        setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 
