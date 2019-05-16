@@ -2,7 +2,7 @@ package GUI.frames;
 
 import GUI.panels.ImagePanel;
 import finals.MyColors;
-import game_management.GameType;
+import game_management.game.GameType;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

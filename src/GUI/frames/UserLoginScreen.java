@@ -71,6 +71,10 @@ public class UserLoginScreen extends NewGameScreen {
         return username;
     }
 
+    public void dispose() {
+        dispose();
+    }
+
     public boolean isLogged() {
         return isLogged;
     }

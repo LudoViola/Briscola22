@@ -5,9 +5,8 @@ import GUI.panels.*;
 import card_management.Card;
 import finals.MyColors;
 import finals.MyFonts;
-import game_management.GameType;
+import game_management.game.GameType;
 import game_management.players.ControlledPlayer;
-import card_management.Table;
 import game_management.players.Player;
 
 import javax.swing.*;

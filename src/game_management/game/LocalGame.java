@@ -1,4 +1,4 @@
-package game_management;
+package game_management.game;
 
 import GUI.frames.ChoseFellowScreen;
 import GUI.frames.GameScreen;

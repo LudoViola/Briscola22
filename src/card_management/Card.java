@@ -12,10 +12,23 @@ public class Card implements Comparable<Card> {
     private Image cardImage;
     private Valore value;
     private PlayerRole owner;
+    private String cardId;
 
     public Card(Semi seme, int valore) {
         this.seme = seme;
         this.valore = valore;
+        pointsCalculator();
+        createId();
+    }
+
+    public Card(String cardId) {
+        this.cardId = cardId;
+        this.valore = Integer.parseInt(cardId.replaceAll("[\\D]", ""));//(cardId.charAt(cardId.length()-1));
+        for (Semi s:Semi.values()) {
+            if(cardId.contains(s.toString())) {
+                this.seme = s;
+            }
+        }
         pointsCalculator();
     }
 
@@ -47,7 +60,7 @@ public class Card implements Comparable<Card> {
 
     @Override
     public String toString() {
-        return "{" + "seme=" + seme + '}' +value;
+        return "{" + "seme=" + seme + '}' +valore;
     }
 
      @Override
@@ -74,7 +87,13 @@ public class Card implements Comparable<Card> {
             return -1;
         }
     }
+    private void createId() {
+        this.cardId = seme.toString() + valore;
+    }
 
+    public String getCardId() {
+        return cardId;
+    }
     int getValor() {
         return valore;
     }
