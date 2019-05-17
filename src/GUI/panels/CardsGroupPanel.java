@@ -54,4 +54,9 @@ public class CardsGroupPanel {
             p.setActionListener(listener);
         }
     }
+    public void removeActionListener(ActionListener listener) {
+        for (CardPanel p:cardsSlot) {
+            p.removeActionListener(listener);
+        }
+    }
 }

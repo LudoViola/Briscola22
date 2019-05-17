@@ -24,24 +24,24 @@ public class GameScreen extends JFrame implements ActionListener {
     private JPanel playerCardZone;
     private JPanel tablePanel;
     private JPanel innerTablePanel;
-    private CardsGroupPanel cardsContainer;
+    CardsGroupPanel cardsContainer;
     private TableCardPanel tableCards;
     private LogPanel logPanel;
     private Player currentPlayer;
-    private JLabel playerName;
-    private JButton buttonBet;
-    private JButton exitButton;
-    private boolean betDone;
-    private boolean turnDone;
-    private boolean gameEnded;
+    JLabel playerName;
+    JButton buttonBet;
+    JButton exitButton;
+    boolean betDone;
+     boolean turnDone;
+    boolean gameEnded;
     private boolean listenerEnabled;
     private boolean bettingTurn;
-    private int bet;
-    private JButton buttonPass;
-    private JSpinner betSpinner;
-    private final Object lock;
-    private String imageString;
-    private int higherBet;
+    int bet;
+    JButton buttonPass;
+    JSpinner betSpinner;
+    final Object lock;
+    String imageString;
+    int higherBet;
     private SpinnerNumberModel model;
     private JPanel innerRightPanel;
     private JPanel innerLeftPanel;
@@ -303,7 +303,7 @@ public class GameScreen extends JFrame implements ActionListener {
             setActionListener();
         }
         if(bettingTurn) {
-            if (!(player instanceof ControlledPlayer)) {
+            if (!(player instanceof ControlledPlayer )) {
                 setBetAreaVisibility(false);
             } else {
                 setBetAreaVisibility(true);
@@ -451,7 +451,9 @@ public class GameScreen extends JFrame implements ActionListener {
     public void setActionListener() {
         cardsContainer.setActionListener(this);
     }
-
+    public void removeActionListener() {
+        cardsContainer.setActionListener(this);
+    }
     public void setBettingTurn(boolean bettingTurn) {
         this.bettingTurn = bettingTurn;
     }

@@ -1,6 +1,5 @@
 package game_management.game;
 
-import GUI.frames.GameScreen;
 import GUI.frames.OnlineGameScreen;
 import GUI.frames.UserLoginScreen;
 import card_management.Card;
@@ -25,12 +24,15 @@ public class Client {
     private OnlinePlayer onlinePlayer;
     private int counter;
     private Deck deck;
+    private GameStatus gameStatus;
+    private OnlineGameScreen screen;
 
     public Client() {
         game = new LocalGame(lock);
         gameRoomReady = false;
         counter = 0;
         deck = new Deck();
+        gameStatus = GameStatus.SETUP;
     }
 
     public void startGame() {
@@ -53,15 +55,25 @@ public class Client {
             try {
                 login(name);
                 onlinePlayer = new OnlinePlayer(name);
-                waitForGameReady();
+                waitForMessage();
                 onlinePlayer.sortHand();
                 System.out.println(onlinePlayer);
-                OnlineGameScreen screen = new OnlineGameScreen(onlinePlayer,lock);
+                screen = new OnlineGameScreen(onlinePlayer,lock);
                 screen.pack();
                 screen.setLocationRelativeTo(null);
                 screen.setVisible(true);
                 screen.setGameType(GameType.ONLINE);
                 screen.setTurnDone(false);
+                waitForMessage();
+                synchronized (lock) {
+                    while (!screen.isBetDone()) {
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
 
             } catch (IOException | ClassNotFoundException | InterruptedException e) {
                 if(e.getMessage().equals("Connection reset")) {
@@ -81,12 +93,32 @@ public class Client {
         startGame();
     }
 
-    private  void waitForGameReady()throws IOException, ClassNotFoundException {
+    private  void waitForMessage()throws IOException, ClassNotFoundException {
         boolean check = true;
             while (check) {
                 if (socket.isConnected()) {
                     ois = new ObjectInputStream(socket.getInputStream());
                     String message = (String) ois.readObject();
+                    switch (message) {
+                        case Message.SENDING_CARD:
+                            System.out.println("Receiving cards");
+                            gameRoomReady = true;
+                            break;
+                        case Message.YOUR_BETTING_TURN:
+                            screen.setBetAreaVisibility(true);
+                            check = false;
+                            break;
+                            default:
+                                if (gameStatus == GameStatus.SETUP) {
+                                    drawCard(message);
+                                    if(counter == 8) {
+                                        check = false;
+                                    }
+                                }
+                                break;
+                    }
+                }
+                /*
                     if(!gameRoomReady) {
                         if (Message.SENDING_CARD.equals(message)) {
                             System.out.println("Receiving cards");
@@ -105,12 +137,22 @@ public class Client {
                         if(counter == 8) {
                             break;
                         }
-                    }
+                    }*/
                 }
             }
-        }
 
-        private void login(String name) throws IOException, ClassNotFoundException, InterruptedException {
+    private void drawCard(String message) {
+        Card card = new Card(message);
+        for (Card c:deck.getDeck()) {
+            if(c.equals(card)) {
+                card.setCardImage(c.getCardImage());
+            }
+        }
+        onlinePlayer.draw(card);
+        counter++;
+    }
+
+    private void login(String name) throws IOException, ClassNotFoundException, InterruptedException {
             InetAddress host = InetAddress.getLocalHost();
             socket = null;
             ObjectOutputStream oos = null;

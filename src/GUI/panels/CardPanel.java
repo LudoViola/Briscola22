@@ -42,6 +42,9 @@ public class CardPanel extends JPanel {
     public void setActionListener(ActionListener listener) {
         buttonCardImageUp.setActionListener(listener);
     }
+    public void removeActionListener(ActionListener listener) {
+        buttonCardImageUp.removeActionListener(listener);
+    }
 
     @Override
     public void setBackground(Color bg) {

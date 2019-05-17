@@ -21,6 +21,10 @@ public class ButtonCardImage extends JButton {
         this.addActionListener(listener);
     }
 
+    public void removeActionListener(ActionListener listener) {
+        this.removeActionListener(listener);
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);

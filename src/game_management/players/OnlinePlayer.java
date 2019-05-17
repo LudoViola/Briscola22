@@ -15,6 +15,10 @@ public class OnlinePlayer extends Player{
         this.score = 0;
     }
 
+    public String getPlayerName() {
+        return playerName;
+    }
+
     @Override
     public String toString() {
         return "OnlinePlayer{" +
