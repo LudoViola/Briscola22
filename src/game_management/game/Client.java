@@ -1,10 +1,12 @@
 package game_management.game;
 
+import GUI.frames.GameScreen;
+import GUI.frames.OnlineGameScreen;
 import GUI.frames.UserLoginScreen;
 import card_management.Card;
+import card_management.Deck;
 import finals.Message;
 import game_management.players.OnlinePlayer;
-import game_management.players.Player;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,10 +23,14 @@ public class Client {
     private final  int port = 9876;
     private boolean gameRoomReady;
     private OnlinePlayer onlinePlayer;
+    private int counter;
+    private Deck deck;
 
     public Client() {
         game = new LocalGame(lock);
         gameRoomReady = false;
+        counter = 0;
+        deck = new Deck();
     }
 
     public void startGame() {
@@ -50,6 +56,13 @@ public class Client {
                 waitForGameReady();
                 onlinePlayer.sortHand();
                 System.out.println(onlinePlayer);
+                OnlineGameScreen screen = new OnlineGameScreen(onlinePlayer,lock);
+                screen.pack();
+                screen.setLocationRelativeTo(null);
+                screen.setVisible(true);
+                screen.setGameType(GameType.ONLINE);
+                screen.setTurnDone(false);
+
             } catch (IOException | ClassNotFoundException | InterruptedException e) {
                 if(e.getMessage().equals("Connection reset")) {
                     resetGame(loginScreen);
@@ -69,20 +82,24 @@ public class Client {
     }
 
     private  void waitForGameReady()throws IOException, ClassNotFoundException {
-            while (true) {
+        boolean check = true;
+            while (check) {
                 if (socket.isConnected()) {
                     ois = new ObjectInputStream(socket.getInputStream());
                     String message = (String) ois.readObject();
                     if(!gameRoomReady) {
-                        if (message.equals(Message.SENDING_CARD)) {
+                        if (Message.SENDING_CARD.equals(message)) {
                             System.out.println("Receiving cards");
                             gameRoomReady = true;
                         }
                     }
                     else {
-                        int counter = 0;
                         Card card = new Card(message);
-                        System.out.println(card);
+                        for (Card c:deck.getDeck()) {
+                            if(c.equals(card)) {
+                                card.setCardImage(c.getCardImage());
+                            }
+                        }
                         onlinePlayer.draw(card);
                         counter++;
                         if(counter == 8) {

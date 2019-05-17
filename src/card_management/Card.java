@@ -30,6 +30,7 @@ public class Card implements Comparable<Card> {
             }
         }
         pointsCalculator();
+        addValue();
     }
 
     private void pointsCalculator() {
@@ -109,7 +110,7 @@ public class Card implements Comparable<Card> {
     public Image getCardImage() {
         return cardImage;
     }
-    void setCardImage(Image cardImage) {
+    public void setCardImage(Image cardImage) {
         this.cardImage = cardImage;
     }
     void setValue(Valore value) {
@@ -122,5 +123,40 @@ public class Card implements Comparable<Card> {
 
     public void setOwner(PlayerRole owner) {
         this.owner = owner;
+    }
+
+    private void addValue() {
+        switch (this.valore) {
+            case 1:
+                value = Valore.ACE;
+                break;
+            case 2:
+                value = Valore.TWO;
+                break;
+            case 3:
+                value = Valore.THREE;
+                break;
+            case 4:
+                value = Valore.FOUR;
+                break;
+            case 5:
+                value = Valore.FIVE;
+                break;
+            case 6:
+                value = Valore.SIX;
+                break;
+            case 7:
+                value = Valore.SEVEN;
+                break;
+            case 8:
+                value = Valore.EIGHT;
+                break;
+            case 9:
+                value = Valore.NINE;
+                break;
+            case 10:
+                value = Valore.TEN;
+                break;
+        }
     }
 }

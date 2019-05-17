@@ -15,6 +15,9 @@ public abstract class Player implements Comparable<Player> {
      private boolean flag = true;
      PlayerRole role;
 
+    public Player() {
+    }
+
     public Player(int order) {
         this.order = order;
         this.wonCards = new ArrayList<>();

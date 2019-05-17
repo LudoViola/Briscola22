@@ -19,6 +19,10 @@ public class Deck {
         Collections.shuffle(deck);
     }
 
+    public void removeCard(Card c) {
+        deck.remove(c);
+    }
+
     private  void createDeck() {
         int factor = 0;
         for(Semi s: Semi.values()) {
