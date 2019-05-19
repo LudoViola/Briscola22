@@ -21,7 +21,6 @@ public class OnlineGameScreen extends GameScreen {
     @Override
     public void updatePlayerCards(Player player) {
         cardsContainer.update(player.getHand(), true);
-
     }
 
     @Override

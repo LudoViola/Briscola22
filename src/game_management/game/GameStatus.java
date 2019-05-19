@@ -1,5 +1,5 @@
 package game_management.game;
 
 public enum GameStatus {
-    SETUP, BETTING
+    SETUP, BETTING, RUNNING
 }

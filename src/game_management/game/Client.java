@@ -26,6 +26,7 @@ public class Client {
     private Deck deck;
     private GameStatus gameStatus;
     private OnlineGameScreen screen;
+    private UserLoginScreen loginScreen;
 
     public Client() {
         game = new LocalGame(lock);
@@ -38,7 +39,7 @@ public class Client {
     public void startGame() {
         game.goToMenuScreen();
         if (game.isMultiplayer()) {
-            UserLoginScreen loginScreen = new UserLoginScreen(lock);
+            loginScreen = new UserLoginScreen(lock);
             loginScreen.getFrame().setVisible(true);
             synchronized (lock) {
                 while (!loginScreen.isLogged()) {
@@ -58,6 +59,7 @@ public class Client {
                 waitForMessage();
                 onlinePlayer.sortHand();
                 System.out.println(onlinePlayer);
+                loginScreen.dispose();
                 screen = new OnlineGameScreen(onlinePlayer,lock);
                 screen.pack();
                 screen.setLocationRelativeTo(null);
@@ -65,19 +67,13 @@ public class Client {
                 screen.setGameType(GameType.ONLINE);
                 screen.setTurnDone(false);
                 waitForMessage();
-                synchronized (lock) {
-                    while (!screen.isBetDone()) {
-                        try {
-                            lock.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
+                System.out.println("here5");
+                waitForMessage();
+
 
             } catch (IOException | ClassNotFoundException | InterruptedException e) {
                 if(e.getMessage().equals("Connection reset")) {
-                    resetGame(loginScreen);
+                    resetGame();
                 }
                 else {
                     e.printStackTrace();
@@ -86,9 +82,12 @@ public class Client {
         }
     }
 
-    private void resetGame(UserLoginScreen loginScreen) {
+    private void resetGame() {
         System.out.println("Connection with Server lost, Game Restarting");
         loginScreen.dispose();
+        if(gameRoomReady) {
+            this.screen.dispose();
+        }
         game = new LocalGame(lock);
         startGame();
     }
@@ -96,50 +95,56 @@ public class Client {
     private  void waitForMessage()throws IOException, ClassNotFoundException {
         boolean check = true;
             while (check) {
-                if (socket.isConnected()) {
+                System.out.println("here6");
                     ois = new ObjectInputStream(socket.getInputStream());
                     String message = (String) ois.readObject();
+                    System.out.println(message);
                     switch (message) {
+                        case Message.NO_BET:
+                            gameStatus = GameStatus.RUNNING;
+                            System.out.println("here1");
+                            check = false;
+                            break;
+                        case Message.YOUR_TURN:
+                            System.out.println("here");
+                            check = false;
+                            break;
                         case Message.SENDING_CARD:
                             System.out.println("Receiving cards");
                             gameRoomReady = true;
                             break;
                         case Message.YOUR_BETTING_TURN:
-                            screen.setBetAreaVisibility(true);
                             check = false;
-                            break;
-                            default:
-                                if (gameStatus == GameStatus.SETUP) {
-                                    drawCard(message);
-                                    if(counter == 8) {
-                                        check = false;
+                            screen.revalidate();
+                            screen.repaint();
+                            gameStatus = GameStatus.BETTING;
+                            screen.setBetAreaVisibility(true);
+                            synchronized (lock) {
+                                while (!screen.isBetDone()) {
+                                    try {
+                                        lock.wait();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
                                     }
                                 }
-                                break;
-                    }
-                }
-                /*
-                    if(!gameRoomReady) {
-                        if (Message.SENDING_CARD.equals(message)) {
-                            System.out.println("Receiving cards");
-                            gameRoomReady = true;
-                        }
-                    }
-                    else {
-                        Card card = new Card(message);
-                        for (Card c:deck.getDeck()) {
-                            if(c.equals(card)) {
-                                card.setCardImage(c.getCardImage());
                             }
-                        }
-                        onlinePlayer.draw(card);
-                        counter++;
-                        if(counter == 8) {
+                            String bet = "" + screen.getBet();
+                            sendMessage(Message.SENDING_BET);
+                            System.out.println("message sent");
+                            screen.setBetAreaVisibility(false);
+                            sendMessage(bet);
                             break;
-                        }
-                    }*/
+                        default:
+                            if (gameStatus == GameStatus.SETUP) {
+                                drawCard(message);
+                                if (counter == 8) {
+                                    check = false;
+                                }
+                            }
+                            break;
+                    }
                 }
-            }
+                }
 
     private void drawCard(String message) {
         Card card = new Card(message);
@@ -153,25 +158,29 @@ public class Client {
     }
 
     private void login(String name) throws IOException, ClassNotFoundException, InterruptedException {
-            InetAddress host = InetAddress.getLocalHost();
             socket = null;
-            ObjectOutputStream oos = null;
             ois = null;
-            //establish socket connection to server
-            socket = new Socket(host.getHostName(), port);
-            //write to socket using ObjectOutputStream
-            oos = new ObjectOutputStream(socket.getOutputStream());
-            System.out.println("Sending request to Socket Server");
-            oos.writeObject(name);
-            //read the server response message
+        sendMessage(name);
+        //read the server response message
             ois = new ObjectInputStream(socket.getInputStream());
             String message = (String) ois.readObject();
-
-                System.out.println("Message: " + message);
+            System.out.println("Message: " + message);
             //close resources
             //ois.close();
             //oos.close();
             Thread.sleep(100);
 
         }
+
+    private void sendMessage(String name) throws IOException {
+        InetAddress host = InetAddress.getLocalHost();
+        //establish socket connection to server
+        socket = new Socket(host.getHostName(), port);
+        //write to socket using ObjectOutputStream
+        ObjectOutputStream oos;
+        oos = new ObjectOutputStream(socket.getOutputStream());
+        System.out.println("Sending request to Socket Server");
+        System.out.println(name);
+        oos.writeObject(name);
+    }
 }

@@ -72,7 +72,7 @@ public class UserLoginScreen extends NewGameScreen {
     }
 
     public void dispose() {
-        dispose();
+        this.frame.dispose();
     }
 
     public boolean isLogged() {
