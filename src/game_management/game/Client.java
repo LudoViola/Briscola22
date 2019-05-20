@@ -68,7 +68,8 @@ public class Client {
                 screen.setTurnDone(false);
                 waitForMessage();
                 System.out.println("here5");
-                waitForMessage();
+               // waitForMessage();
+                screen.dispose();
 
 
             } catch (IOException | ClassNotFoundException | InterruptedException e) {
@@ -95,7 +96,6 @@ public class Client {
     private  void waitForMessage()throws IOException, ClassNotFoundException {
         boolean check = true;
             while (check) {
-                System.out.println("here6");
                     ois = new ObjectInputStream(socket.getInputStream());
                     String message = (String) ois.readObject();
                     System.out.println(message);
@@ -119,6 +119,7 @@ public class Client {
                             screen.repaint();
                             gameStatus = GameStatus.BETTING;
                             screen.setBetAreaVisibility(true);
+                            System.out.println("sono qui");
                             synchronized (lock) {
                                 while (!screen.isBetDone()) {
                                     try {
@@ -130,7 +131,6 @@ public class Client {
                             }
                             String bet = "" + screen.getBet();
                             sendMessage(Message.SENDING_BET);
-                            System.out.println("message sent");
                             screen.setBetAreaVisibility(false);
                             sendMessage(bet);
                             break;
