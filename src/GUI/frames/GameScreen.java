@@ -25,7 +25,7 @@ public class GameScreen extends JFrame implements ActionListener {
     private JPanel tablePanel;
     private JPanel innerTablePanel;
     CardsGroupPanel cardsContainer;
-    private TableCardPanel tableCards;
+    TableCardPanel tableCards;
     private LogPanel logPanel;
     private Player currentPlayer;
     JLabel playerName;
@@ -45,7 +45,7 @@ public class GameScreen extends JFrame implements ActionListener {
     private SpinnerNumberModel model;
     private JPanel innerRightPanel;
     private JPanel innerLeftPanel;
-    private ArrayList<TableIconPanel> iconPanels;
+    ArrayList<TableIconPanel> iconPanels;
     private GameType gameType;
 
     private final int MAX_WIDTH = 1300;
@@ -273,7 +273,7 @@ public class GameScreen extends JFrame implements ActionListener {
         String s = "Hand Winner:" + p.getPlayerID();
        // JOptionPane.showMessageDialog(this,s,"Hand Winner", JOptionPane.INFORMATION_MESSAGE);
         logPanel.update(s);
-        tableCards.update(p);
+        tableCards.update();
     }
 
     public void displayBettingMove(Player p,int bet) {
@@ -378,10 +378,10 @@ public class GameScreen extends JFrame implements ActionListener {
         for (TableIconPanel pane:iconPanels) {
             if(pane.getPlayerName().getText().equals(playerId)) {
                 pane.setTurnPointer(visibility);
+                pane.revalidate();
+                pane.repaint();
             }
         }
-        revalidate();
-        repaint();
     }
 
     @Override

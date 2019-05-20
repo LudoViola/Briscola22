@@ -64,12 +64,12 @@ public class ChoseFellowScreen implements ActionListener {
         for (Card c:deckCopy.getDeck()) {
             if(c.getCardImage().toString().equals(e.getActionCommand())) {
                 cardChosen = c;
-                endPhase(c);
+                endPhase();
             }
         }
     }
 
-    public void endPhase(Card c) {
+    public void endPhase() {
         //JOptionPane.showMessageDialog(frame.getContentPane(),c,"Card Chosen", JOptionPane.INFORMATION_MESSAGE);
         frame.dispose();
     }

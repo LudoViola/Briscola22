@@ -20,7 +20,7 @@ public class TableCardPanel {
         panel.setBackground(Color.GREEN);
     }
 
-    public void update(Player player) {
+    public void update() {
         if(cardsSlot.size()== 5) {
             for (ButtonCardImage p : cardsSlot) {
                 panel.remove(p);
@@ -31,15 +31,19 @@ public class TableCardPanel {
 
     public void update(Card card) {
         if(cardsSlot.size()== 5) {
-            for (ButtonCardImage p : cardsSlot) {
-                panel.remove(p);
-            }
-            cardsSlot.clear();
+            clear();
             addSlot(card);
         }
         else {
             addSlot(card);
         }
+    }
+
+    private void clear() {
+        for (ButtonCardImage p : cardsSlot) {
+            panel.remove(p);
+        }
+        cardsSlot.clear();
     }
 
     private void addSlot(Card card) {

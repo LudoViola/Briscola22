@@ -1,12 +1,14 @@
 package GUI.frames;
 
 import GUI.buttons.ButtonCardImage;
+import GUI.panels.TableIconPanel;
 import game_management.players.ControlledPlayer;
 import game_management.players.OnlinePlayer;
 import game_management.players.Player;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 public class OnlineGameScreen extends GameScreen {
 
@@ -18,42 +20,24 @@ public class OnlineGameScreen extends GameScreen {
         this.playerName.setText(player.getPlayerName());
     }
 
+
+    public void logHandWinner(String p) {
+        String s = "Hand Winner:" + p;
+        log(s);
+        tableCards.update();
+    }
+
+
+
     @Override
     public void updatePlayerCards(Player player) {
         cardsContainer.update(player.getHand(), true);
     }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == buttonBet) {
-            bet = (Integer) betSpinner.getValue();
-            if(bet > higherBet) {
-                synchronized (lock) {
-                    updateSpinner();
-                    betDone = true;
-                    lock.notifyAll();
-                }
-            }
-        }
-        else if(e.getSource() == buttonPass) {
-            bet = 0;
-            synchronized (lock) {
-                betDone = true;
-                lock.notifyAll();
-            }
-        }
-        else if(e.getSource() instanceof ButtonCardImage) {
-            imageString = e.getActionCommand();
-            synchronized (lock) {
-                turnDone = true;
-                lock.notifyAll();
-            }
-        }
-        else if(e.getSource() == exitButton) {
-            synchronized (lock) {
-                gameEnded = true;
-                lock.notifyAll();
-            }
+    public void addNameOnIcons(ArrayList<String> players) {
+        int i = 0;
+        for (TableIconPanel panel : iconPanels) {
+            panel.setPlayerName(players.get(i));
+            i++;
         }
     }
 }

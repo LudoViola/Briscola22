@@ -167,7 +167,7 @@ public class LocalGame {
             AIPlayer player = (AIPlayer) players.get(0);
             fellowCard = player.chooseFellow();
             screen.log("Carta Chiamata: " + fellowCard);
-            screen1.endPhase(fellowCard);
+            screen1.endPhase();
         }
         briscola = fellowCard.getSeme();
         screen.setListenerEnabled(true);
