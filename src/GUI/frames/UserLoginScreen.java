@@ -21,7 +21,7 @@ public class UserLoginScreen extends NewGameScreen {
         super(lock);
         this.buttonPanel.setVisible(false);
         loginPanel = new JPanel();
-        loginPanel.setBackground(MyColors.transparent);
+        loginPanel.setBackground(MyColors.TRANSPARENT);
         loginPanel.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
         loginPanel.setBorder(new RoundedBorder(10));
         JLabel lblUsername = new JLabel("Username:");

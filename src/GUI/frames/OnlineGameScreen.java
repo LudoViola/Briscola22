@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 public class OnlineGameScreen extends GameScreen {
+    private boolean cardsEnabled;
 
     public OnlineGameScreen(Player firstPlayer, Object lock) throws HeadlessException {
         super(firstPlayer, lock);
@@ -18,8 +19,12 @@ public class OnlineGameScreen extends GameScreen {
         removeActionListener();
         OnlinePlayer player = (OnlinePlayer) firstPlayer;
         this.playerName.setText(player.getPlayerName());
+        cardsEnabled = false;
     }
 
+    public void setCardsEnabled(boolean cardsEnabled) {
+        this.cardsEnabled = cardsEnabled;
+    }
 
     public void logHandWinner(String p) {
         String s = "Hand Winner:" + p;
@@ -27,6 +32,41 @@ public class OnlineGameScreen extends GameScreen {
         tableCards.update();
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == buttonBet) {
+            bet = (Integer) betSpinner.getValue();
+            if(bet > higherBet) {
+                synchronized (lock) {
+                    updateSpinner();
+                    betDone = true;
+                    lock.notifyAll();
+                }
+            }
+        }
+        else if(e.getSource() == buttonPass) {
+            bet = 0;
+            synchronized (lock) {
+                betDone = true;
+                lock.notifyAll();
+            }
+        }
+        else if(e.getSource() instanceof ButtonCardImage) {
+            if(cardsEnabled) {
+                imageString = e.getActionCommand();
+                synchronized (lock) {
+                    turnDone = true;
+                    lock.notifyAll();
+                }
+            }
+        }
+        else if(e.getSource() == exitButton) {
+            synchronized (lock) {
+                gameEnded = true;
+                lock.notifyAll();
+            }
+        }
+    }
 
 
     @Override

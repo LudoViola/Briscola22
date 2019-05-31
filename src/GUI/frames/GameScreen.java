@@ -80,22 +80,22 @@ public class GameScreen extends JFrame implements ActionListener {
         backgroundPanel.setLayout(new BorderLayout());
 
         JPanel rightPanel = new JPanel();
-        rightPanel.setBackground(MyColors.brown);
+        rightPanel.setBackground(MyColors.BROWN);
         rightPanel.setPreferredSize(new Dimension(MAX_WIDTH/7,1000));
 
         model = new SpinnerNumberModel(61,61,120,2);
         betSpinner = new JSpinner(model);
         betSpinner.setPreferredSize(new Dimension(MAX_WIDTH/14,MAX_WIDTH/14));
-        betSpinner.setBackground(MyColors.brown);
+        betSpinner.setBackground(MyColors.BROWN);
         betSpinner.setForeground(Color.BLACK);
-        betSpinner.getComponent(0).setBackground(MyColors.brown);
-        betSpinner.getComponent(1).setBackground(MyColors.brown);
-        betSpinner.getComponent(2).setBackground(MyColors.brown);
-        betSpinner.getComponent(0).setForeground(MyColors.brown);
-        betSpinner.getComponent(1).setForeground(MyColors.brown);
-        betSpinner.getComponent(2).setForeground(MyColors.brown);
+        betSpinner.getComponent(0).setBackground(MyColors.BROWN);
+        betSpinner.getComponent(1).setBackground(MyColors.BROWN);
+        betSpinner.getComponent(2).setBackground(MyColors.BROWN);
+        betSpinner.getComponent(0).setForeground(MyColors.BROWN);
+        betSpinner.getComponent(1).setForeground(MyColors.BROWN);
+        betSpinner.getComponent(2).setForeground(MyColors.BROWN);
         JSpinner.NumberEditor jsEditor = (JSpinner.NumberEditor) betSpinner.getEditor();
-        jsEditor.getTextField().setBackground(MyColors.brown);
+        jsEditor.getTextField().setBackground(MyColors.BROWN);
         jsEditor.getTextField().setForeground(Color.BLACK);
         jsEditor.getTextField().setFont(MyFonts.COURIER);
         JComponent comp = betSpinner.getEditor();
@@ -114,17 +114,17 @@ public class GameScreen extends JFrame implements ActionListener {
 
         JPanel betPanel = new JPanel();
         betPanel.setLayout(new GridLayout(4,1));
-        betPanel.setBackground(MyColors.brown);
+        betPanel.setBackground(MyColors.BROWN);
         betPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 
         playerName = new JLabel("Player0");
         playerName.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
-        playerName.setBackground(MyColors.brown);
+        playerName.setBackground(MyColors.BROWN);
         playerName.setForeground(Color.BLACK);
         playerName.setFont(new Font("Courier",Font.BOLD,18));
 
         buttonBet = new JButton("BET");
-        buttonBet.setBackground(MyColors.brown);
+        buttonBet.setBackground(MyColors.BROWN);
         buttonBet.setForeground(Color.BLACK);
         buttonBet.setFont(new Font("Courier",Font.BOLD,18));
         buttonBet.addActionListener(this);
@@ -134,7 +134,7 @@ public class GameScreen extends JFrame implements ActionListener {
         buttonPass.setActionCommand("PASS");
         buttonPass.setForeground(Color.BLACK);
         buttonPass.setFont(new Font("Courier",Font.BOLD,18));
-        buttonPass.setBackground(MyColors.brown);
+        buttonPass.setBackground(MyColors.BROWN);
         buttonPass.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
         buttonPass.addActionListener(this);
 
@@ -156,7 +156,7 @@ public class GameScreen extends JFrame implements ActionListener {
         innerRightPanel = new JPanel();
         innerRightPanel.setLayout(new GridLayout(2,1));
         innerRightPanel.setBorder(BorderFactory.createEmptyBorder(0,100,0,0));
-        innerRightPanel.setBackground(MyColors.transparent);
+        innerRightPanel.setBackground(MyColors.TRANSPARENT);
         innerRightPanel.setVisible(false);
         iconPanels = new ArrayList<>();
 
@@ -172,7 +172,7 @@ public class GameScreen extends JFrame implements ActionListener {
         innerLeftPanel = new JPanel();
         innerLeftPanel.setLayout(new GridLayout(2,1));
         innerLeftPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,100));
-        innerLeftPanel.setBackground(MyColors.transparent);
+        innerLeftPanel.setBackground(MyColors.TRANSPARENT);
         innerLeftPanel.setVisible(false);
 
         TableIconPanel panel2 = new TableIconPanel();
@@ -195,12 +195,12 @@ public class GameScreen extends JFrame implements ActionListener {
         playerCardZone.setPreferredSize(new Dimension(200,200));
         playerCardZone.setBorder(BorderFactory.createEmptyBorder(0,0,20,0));
         playerCardZone.setLayout(new FlowLayout(FlowLayout.LEFT));
-        playerCardZone.setBackground(Color.WHITE);
+        playerCardZone.setBackground(MyColors.BROWN);
 
         JPanel menuZone = new JPanel();
         menuZone.setPreferredSize(new Dimension(MAX_WIDTH,50));
         menuZone.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        menuZone.setBackground(MyColors.brown);
+        menuZone.setBackground(MyColors.BROWN);
 
         logPanel = new LogPanel();
         logPanel.setPreferredSize(new Dimension(MAX_WIDTH/2 - 12,200));
@@ -216,6 +216,7 @@ public class GameScreen extends JFrame implements ActionListener {
         menuZone.add(exitButton);
 
         cardsContainer = new CardsGroupPanel(firstPlayer.getHand());
+        cardsContainer.setBackground(MyColors.BROWN);
         cardsContainer.getPanel().setPreferredSize(new Dimension(MAX_WIDTH/2 -12,200));
         playerCardZone.add(cardsContainer.getPanel());
         playerCardZone.add(logPanel);
@@ -297,8 +298,7 @@ public class GameScreen extends JFrame implements ActionListener {
 
     public void updatePlayerCards(Player player) {
         cardsContainer.update(player.getHand(), player instanceof ControlledPlayer);
-        //revalidate();
-        //repaint();
+
         if(listenerEnabled) {
             setActionListener();
         }
@@ -309,6 +309,8 @@ public class GameScreen extends JFrame implements ActionListener {
                 setBetAreaVisibility(true);
             }
         }
+        revalidate();
+        repaint();
     }
 
     public void setCurrentPlayer(Player currentPlayer) {
@@ -378,8 +380,8 @@ public class GameScreen extends JFrame implements ActionListener {
         for (TableIconPanel pane:iconPanels) {
             if(pane.getPlayerName().getText().equals(playerId)) {
                 pane.setTurnPointer(visibility);
-                pane.revalidate();
-                pane.repaint();
+                revalidate();
+                repaint();
             }
         }
     }

@@ -18,7 +18,7 @@ public class TableIconPanel extends JPanel {
     public TableIconPanel() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(50,0,50,0));
-        setBackground(MyColors.transparent);
+        setBackground(MyColors.TRANSPARENT);
 
         image = new JLabel();
         URL resource = getClass().getClassLoader().getResource("resources/user.png");

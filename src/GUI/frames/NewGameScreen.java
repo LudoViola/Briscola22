@@ -39,7 +39,7 @@ public class NewGameScreen implements ActionListener {
         backgroundPanel.setLayout(new FlowLayout(FlowLayout.CENTER,300,20));
 
         buttonPanel = new JPanel();
-        buttonPanel.setBackground(MyColors.transparent);
+        buttonPanel.setBackground(MyColors.TRANSPARENT);
         buttonPanel.setPreferredSize(new Dimension(300,400));
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER,300,20));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(1,1,0,0));

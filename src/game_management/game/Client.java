@@ -146,7 +146,7 @@ public class Client {
                             lock1.wait();
                         }
                     }
-                    sendMessage(Message.MY_ICON_TURN+onlinePlayer.getPlayerName());
+                    screen.setCardsEnabled(true);
                     screen.setActionListener();
                     synchronized (lock) {
                         while (!screen.isTurnDone()) {
@@ -157,6 +157,7 @@ public class Client {
                     screen.updatePlayerCards(onlinePlayer);
                     screen.removeActionListener();
                     screen.setTurnDone(false);
+                    screen.setCardsEnabled(false);
                     gameStatus = GameStatus.WAIT;
                 }
 
@@ -288,6 +289,10 @@ public class Client {
                             }
                             screen.updateTableCards(card);
                             break;
+                        case Message.HIGHER_BET:
+                            screen.setHigherBet(Integer.parseInt(details[1]));
+                            screen.updateSpinner();
+                            break;
                         case  Message.YOUR_TURN:
                             gameStatus = GameStatus.MY_TURN;
                             synchronized (lock1) {
@@ -295,13 +300,14 @@ public class Client {
                             }
                             break;
                         case Message.MY_ICON_TURN:
-                            if(!isIconVisible) {
-                                screen.showYourTurn(details[1], true);
-                                isIconVisible = true;
-                                playingUser = details[1];
-                            }else {
-                                screen.showYourTurn(playingUser, false);
-                                isIconVisible = false;
+                            if(!details[1].equals(onlinePlayer.getPlayerName())) {
+                                if (!isIconVisible) {
+                                    screen.showYourTurn(details[1], true);
+                                    isIconVisible = true;
+                                } else {
+                                    screen.showYourTurn(details[1], false);
+                                    isIconVisible = false;
+                                }
                             }
                             break;
                         case Message.END_OF_GAME:
@@ -348,7 +354,7 @@ public class Client {
             ois = null;
         InetAddress host = InetAddress.getLocalHost();
         //establish socket connection to server
-        socket = new Socket(host.getHostName(), port);
+        socket = new Socket("127.0.0.1", port);
         oos = new ObjectOutputStream(socket.getOutputStream());
         ois = new ObjectInputStream(socket.getInputStream());
         System.out.println("Sending request to Socket Server");

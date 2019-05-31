@@ -18,13 +18,17 @@ public class CardsGroupPanel {
         cardsSlot = new ArrayList<>();
         panel.setLayout(new GridLayout(1,8));
         for (Card c:hand.getCards()) {
-            CardPanel cardSlot = new CardPanel(c.getCardImage());
-            cardSlot.setBackground(new Color(95,54,0));
-            cardSlot.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
-            panel.add(cardSlot);
-            cardsSlot.add(cardSlot);
+            addSlot(c);
 
         }
+    }
+
+    private void addSlot(Card c) {
+        CardPanel cardSlot = new CardPanel(c.getCardImage());
+        cardSlot.setBackground(new Color(95, 54, 0));
+        cardSlot.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
+        panel.add(cardSlot);
+        cardsSlot.add(cardSlot);
     }
 
     public void update(Hand hand,boolean isControlled) {
@@ -34,15 +38,15 @@ public class CardsGroupPanel {
             }
             cardsSlot.clear();
             for (Card c : hand.getCards()) {
-                CardPanel cardSlot = new CardPanel(c.getCardImage());
-                cardSlot.setBackground(new Color(95, 54, 0));
-                cardSlot.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
-                panel.add(cardSlot);
-                cardsSlot.add(cardSlot);
+                addSlot(c);
             }
             panel.revalidate();
             panel.repaint();
         }
+    }
+
+    public void setBackground(Color color) {
+        this.panel.setBackground(color);
     }
 
     public JPanel getPanel() {
