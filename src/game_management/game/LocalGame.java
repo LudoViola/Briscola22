@@ -20,9 +20,7 @@ public class LocalGame {
     private Card fellowCard;
     private int startingPlayer;
     private int higherBet;
-    private ControlledPlayer playerUser;
     private CopyOnWriteArrayList<Player> bettingPlayers;
-    private boolean betAnswer;
     private GameScreen screen;
     private final Object lock;
     private boolean isFirst;
@@ -30,7 +28,7 @@ public class LocalGame {
     private GameType gameType;
     private  final int animationSpeed = 800;
 
-    public LocalGame(Object lock) {
+    LocalGame(Object lock) {
         this.lock = lock;
         isMultiplayer = false;
     }
@@ -39,7 +37,6 @@ public class LocalGame {
         higherBet = 60;
         startingPlayer = 0;
         isFirst = true;
-        betAnswer = false;
         this.players = new ArrayList<>();
         generatePlayers();
         this.deck = new Deck();
@@ -55,7 +52,7 @@ public class LocalGame {
         this.screen.setTurnDone(false);
     }
 
-    public void startGame() {
+    private void startGame() {
         bettingTurn();
         chooseFellow();
         playPhase();
@@ -74,7 +71,7 @@ public class LocalGame {
                 if (!(bettingPlayers.contains(p) && bettingPlayers.size() == 1)) {
                     if(p instanceof ControlledPlayer) {
                         synchronized (lock) {
-                            while (!screen.isBetDone()) {
+                            while (screen.isBetDone()) {
                                 try {
                                     lock.wait();
                                 } catch (InterruptedException e) {
@@ -145,7 +142,7 @@ public class LocalGame {
         screen1.setVisible(true);
         if(players.get(0) instanceof ControlledPlayer) {
             synchronized (lock) {
-                while (!screen1.isFellowChosen()) {
+                while (screen1.isFellowChosen()) {
                     try {
                         lock.wait();
                     } catch (InterruptedException e) {
@@ -223,7 +220,7 @@ public class LocalGame {
                 screen.showYourTurn(p.getPlayerID(), Visibility.VISIBLE);
                 if(p instanceof ControlledPlayer) {
                     synchronized (lock) {
-                        while (!screen.isTurnDone()) {
+                        while (screen.isTurnDone()) {
                             try {
                                 lock.wait();
                             } catch (InterruptedException e) {
@@ -272,7 +269,7 @@ public class LocalGame {
         screen.diplayScoreBoard(makeScoreBoard());
         screen.setExitButtonVisibility(true);
         synchronized (lock) {
-            while (!screen.isGameEnded()) {
+            while (screen.isGameEnded()) {
                 try {
                     lock.wait();
                 } catch (InterruptedException e) {
@@ -286,7 +283,7 @@ public class LocalGame {
 
     }
 
-    public void goToMenuScreen() {
+    void goToMenuScreen() {
         NewGameScreen screen = new NewGameScreen(lock);
         screen.getFrame().pack();
         screen.getFrame().setLocationRelativeTo(null);
@@ -312,7 +309,6 @@ public class LocalGame {
     }
 
     private void switchScreen(Player p) {
-        screen.setCurrentPlayer(p);
         if (p.getOrder() != 0 || !isFirst) {
             screen.updatePlayerCards(p);
         }
@@ -343,7 +339,6 @@ public class LocalGame {
                 break;
             case EASY:
                 ControlledPlayer player2 = new ControlledPlayer(0);
-                playerUser = player2;
                 player2.setCurrentBet(0);
                 players.add(player2);
                 for(int i = 1; i < 5; i++) {
@@ -400,7 +395,7 @@ public class LocalGame {
         }
     }
 
-    public boolean isMultiplayer() {
+    boolean isMultiplayer() {
         return isMultiplayer;
     }
 
