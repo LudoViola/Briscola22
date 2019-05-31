@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 public class UserLoginScreen extends NewGameScreen {
 
     private JButton btnLogin;
-    private JButton btnCancel;
     private JTextField txtUsername;
     private String username;
     private boolean isLogged;
@@ -36,7 +35,6 @@ public class UserLoginScreen extends NewGameScreen {
         btnLogin.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
         btnLogin.setBorder(new RoundedBorder(10));
         btnLogin.addActionListener(this);
-        btnCancel = new JButton("Cancel");
 
         label = new JLabel("WAITING FOR PLAYERS...");
         label.setForeground(Color.BLACK);

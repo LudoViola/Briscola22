@@ -7,10 +7,6 @@ public class ImagePanel extends JPanel {
 
     private Image img;
 
-    public ImagePanel(String img) {
-        this(new ImageIcon(img).getImage());
-    }
-
     public ImagePanel(Image img) {
         this.img = img;
         setLayout(null);

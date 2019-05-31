@@ -17,7 +17,6 @@ import java.net.URL;
 public class NewGameScreen implements ActionListener {
     JFrame frame = new JFrame();
     ImagePanel backgroundPanel;
-    private JLabel logo;
     private JButton startControlledGameButton;
     private JButton startMultiplayerGameButton;
     private JButton startPlayerVSEasyGameButton;
@@ -74,7 +73,7 @@ public class NewGameScreen implements ActionListener {
         buttonPanel.add(startMultiplayerGameButton);
 
 
-        logo = new JLabel();
+        JLabel logo = new JLabel();
         logo.setIcon(new ImageIcon(addIcon("resources/logo.png")));
 
         backgroundPanel.add(logo);
@@ -126,12 +125,9 @@ public class NewGameScreen implements ActionListener {
     }
 
 
-        Image addIcon(String path) {
+        private Image addIcon(String path) {
         URL resource = getClass().getClassLoader().getResource(path);
-        Image body = findImage(resource);
-        return body;
-
-
+            return findImage(resource);
     }
 
     public static Image findImage(URL resource) {

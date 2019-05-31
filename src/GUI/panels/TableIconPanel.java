@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.net.URL;
 
 public class TableIconPanel extends JPanel {
-    private JLabel image;
     private JLabel playerName;
     private JLabel turnPointer;
 
@@ -20,7 +19,7 @@ public class TableIconPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(50,0,50,0));
         setBackground(MyColors.TRANSPARENT);
 
-        image = new JLabel();
+        JLabel image = new JLabel();
         URL resource = getClass().getClassLoader().getResource("resources/user.png");
         BufferedImage body = null;
         try {
@@ -29,6 +28,7 @@ public class TableIconPanel extends JPanel {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        assert body != null;
         image.setIcon(new ImageIcon(body));
         playerName = new JLabel();
         turnPointer = new JLabel("YOUR TURN");

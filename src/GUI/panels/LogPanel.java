@@ -6,9 +6,8 @@ import java.awt.*;
 public class LogPanel extends JPanel {
 
     private JTextArea logsField;
-    private JScrollPane scrollPane;
     private JScrollBar vertical;
-    final Font font = new Font("Courier", Font.BOLD,12);
+    private final Font font = new Font("Courier", Font.BOLD,12);
     public LogPanel() {
         setBackground(Color.BLACK);
 
@@ -18,7 +17,7 @@ public class LogPanel extends JPanel {
         logsField.setBackground(Color.BLACK);
         logsField.setForeground(Color.GREEN);
 
-        scrollPane = new JScrollPane(logsField);
+        JScrollPane scrollPane = new JScrollPane(logsField);
 
         vertical = scrollPane.getVerticalScrollBar();
         vertical.setValue( vertical.getMaximum() );

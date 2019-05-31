@@ -12,9 +12,8 @@ import java.net.URL;
 
 public class CardPanel extends JPanel {
 
-    Image image;
-    CardLayout cardLayout;
-    ButtonCardImage buttonCardImageUp;
+    private CardLayout cardLayout;
+    private ButtonCardImage buttonCardImageUp;
 
 
     public CardPanel(Image image) {
@@ -41,9 +40,6 @@ public class CardPanel extends JPanel {
     }
     public void setActionListener(ActionListener listener) {
         buttonCardImageUp.setActionListener(listener);
-    }
-    public void removeActionListener(ActionListener listener) {
-        buttonCardImageUp.removeActionListener(listener);
     }
 
     @Override

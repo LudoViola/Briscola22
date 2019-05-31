@@ -11,8 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ChoseFellowScreen implements ActionListener {
-    JFrame frame;
-    Deck deckCopy;
+    private JFrame frame;
+    private Deck deckCopy;
     private JPanel background;
     private Card cardChosen;
     private boolean FellowChosen;
@@ -42,7 +42,7 @@ public class ChoseFellowScreen implements ActionListener {
         frame.setVisible(b);
     }
 
-    public void fillCards() {
+    private void fillCards() {
         for (Card c:deckCopy.getDeck()) {
             CardPanel cardSlot = new CardPanel(c.getCardImage());
             cardSlot.setActionListener(this);
@@ -79,6 +79,6 @@ public class ChoseFellowScreen implements ActionListener {
     }
 
     public boolean isFellowChosen() {
-        return FellowChosen;
+        return !FellowChosen;
     }
 }

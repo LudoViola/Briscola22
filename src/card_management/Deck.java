@@ -8,7 +8,6 @@ import java.util.Collections;
 
 public class Deck {
     private ArrayList<Card> deck;
-    private final static int NUMBER_OF_CARDS = 40;
 
     public Deck() {
         deck = new ArrayList<>();
@@ -19,9 +18,6 @@ public class Deck {
         Collections.shuffle(deck);
     }
 
-    public void removeCard(Card c) {
-        deck.remove(c);
-    }
 
     private  void createDeck() {
         int factor = 0;
@@ -46,7 +42,7 @@ public class Deck {
         addValore();
     }
 
-    public void addValore() {
+    private void addValore() {
         for (Card c:deck) {
             Valore valore = null;
             switch (c.getValor()) {

@@ -27,7 +27,6 @@ public class GameScreen extends JFrame implements ActionListener {
     CardsGroupPanel cardsContainer;
     TableCardPanel tableCards;
     private LogPanel logPanel;
-    private Player currentPlayer;
     JLabel playerName;
     JButton buttonBet;
     JButton exitButton;
@@ -313,20 +312,17 @@ public class GameScreen extends JFrame implements ActionListener {
         repaint();
     }
 
-    public void setCurrentPlayer(Player currentPlayer) {
-        this.currentPlayer = currentPlayer;
-    }
 
     public boolean isBetDone() {
-        return betDone;
+        return !betDone;
     }
 
     public boolean isTurnDone() {
-        return turnDone;
+        return !turnDone;
     }
 
     public boolean isGameEnded() {
-        return gameEnded;
+        return !gameEnded;
     }
 
     public void setTurnDone(boolean turnDone) {

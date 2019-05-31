@@ -2,7 +2,6 @@ package GUI.frames;
 
 import GUI.buttons.ButtonCardImage;
 import GUI.panels.TableIconPanel;
-import game_management.players.ControlledPlayer;
 import game_management.players.OnlinePlayer;
 import game_management.players.Player;
 
