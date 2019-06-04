@@ -43,6 +43,7 @@ public class ChoseFellowScreen implements ActionListener {
     }
 
     private void fillCards() {
+        deckCopy.getDeck().sort(Card::compareTo);
         for (Card c:deckCopy.getDeck()) {
             CardPanel cardSlot = new CardPanel(c.getCardImage());
             cardSlot.setActionListener(this);

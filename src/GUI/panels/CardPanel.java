@@ -42,6 +42,7 @@ public class CardPanel extends JPanel {
         buttonCardImageUp.setActionListener(listener);
     }
 
+
     @Override
     public void setBackground(Color bg) {
         super.setBackground(bg);

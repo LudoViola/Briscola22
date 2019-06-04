@@ -63,7 +63,7 @@ public class Client {
         loginScreen.setLoginPanelVisibility(false);
 
         try {
-            login(name);
+            login(name, loginScreen.getIp());
             onlinePlayer = new OnlinePlayer(name);
             listenForMessages = new ListenForMessages();
             Thread thread = new Thread(listenForMessages);
@@ -141,7 +141,6 @@ public class Client {
             screen.repaint();
 
             while (!isGameEnded) {
-                screen.removeActionListener();
                 synchronized (lock1) {
                     while (!gameStatus.equals(GameStatus.MY_TURN)) {
                         lock1.wait();
@@ -156,7 +155,6 @@ public class Client {
                 }
                 sendMessage(Message.YOUR_TURN+onlinePlayer.pickACard(screen.getImageString()).getCardId());
                 screen.updatePlayerCards(onlinePlayer);
-                screen.removeActionListener();
                 screen.setTurnDone(false);
                 screen.setCardsEnabled(false);
                 gameStatus = GameStatus.WAIT;
@@ -253,7 +251,8 @@ public class Client {
                             break;
                         case Message.SENDING_CARD:
                             gameRoomReady = true;
-                            drawCard(details[1]);
+                            onlinePlayer.draw(convertCard(details[1]));
+                            counter++;
                             if (counter == 8) {
                                 gameStatus = GameStatus.SETUP;
                                 synchronized (lock1) {
@@ -309,6 +308,9 @@ public class Client {
                                 }
                             }
                             break;
+                        case Message.CALLER:
+                            screen.showBriscola(convertCard(details[1]),details[2]);
+                            break;
                         case Message.END_OF_GAME:
                             isGameEnded = true;
                             screen.setExitButtonVisibility(true);
@@ -337,24 +339,23 @@ public class Client {
     }
 
 
-    private void drawCard(String message) {
+    private Card convertCard(String message) {
         Card card = new Card(message);
         for (Card c:deck.getDeck()) {
             if(c.equals(card)) {
                 card.setCardImage(c.getCardImage());
             }
         }
-        onlinePlayer.draw(card);
-        counter++;
+        return card;
     }
 
-    private void login(String name) throws IOException, InterruptedException {
+    private void login(String name, String ip) throws IOException, InterruptedException {
         Socket socket;
             ois = null;
         InetAddress host = InetAddress.getLocalHost();
         //establish socket connection to server
         int port = 9876;
-        socket = new Socket(host, port);
+        socket = new Socket(ip, port);
         oos = new ObjectOutputStream(socket.getOutputStream());
         ois = new ObjectInputStream(socket.getInputStream());
         System.out.println("Sending request to Socket Server");

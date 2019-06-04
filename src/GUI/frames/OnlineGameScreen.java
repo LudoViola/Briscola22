@@ -15,7 +15,6 @@ public class OnlineGameScreen extends GameScreen {
     public OnlineGameScreen(Player firstPlayer, Object lock) throws HeadlessException {
         super(firstPlayer, lock);
         setBetAreaVisibility(false);
-        removeActionListener();
         OnlinePlayer player = (OnlinePlayer) firstPlayer;
         this.playerName.setText(player.getPlayerName());
         cardsEnabled = false;

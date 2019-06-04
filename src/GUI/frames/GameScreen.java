@@ -21,6 +21,8 @@ import java.util.ArrayList;
 public class GameScreen extends JFrame implements ActionListener {
 
     private JPanel backgroundPanel;
+    private JPanel betPanel;
+    private JPanel rightPanel;
     private JPanel playerCardZone;
     private JPanel tablePanel;
     private JPanel innerTablePanel;
@@ -34,6 +36,7 @@ public class GameScreen extends JFrame implements ActionListener {
      boolean turnDone;
     boolean gameEnded;
     private boolean listenerEnabled;
+    private boolean check;
     private boolean bettingTurn;
     int bet;
     JButton buttonPass;
@@ -44,8 +47,10 @@ public class GameScreen extends JFrame implements ActionListener {
     private SpinnerNumberModel model;
     private JPanel innerRightPanel;
     private JPanel innerLeftPanel;
+    private JLabel playerCaller;
     ArrayList<TableIconPanel> iconPanels;
     private GameType gameType;
+    private JPanel briscolaPanel;
 
     private final int MAX_WIDTH = 1300;
 
@@ -65,7 +70,7 @@ public class GameScreen extends JFrame implements ActionListener {
         });
         */
 
-
+        check = false;
         setTitle("Briscola in 5");
         setSize(MAX_WIDTH,700);
         setResizable(false);
@@ -78,8 +83,9 @@ public class GameScreen extends JFrame implements ActionListener {
         backgroundPanel.setBackground(Color.BLACK);
         backgroundPanel.setLayout(new BorderLayout());
 
-        JPanel rightPanel = new JPanel();
+        rightPanel = new JPanel();
         rightPanel.setBackground(MyColors.BROWN);
+        rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER,100,5));
         rightPanel.setPreferredSize(new Dimension(MAX_WIDTH/7,1000));
 
         model = new SpinnerNumberModel(61,61,120,2);
@@ -111,8 +117,8 @@ public class GameScreen extends JFrame implements ActionListener {
         });
 
 
-        JPanel betPanel = new JPanel();
-        betPanel.setLayout(new GridLayout(4,1));
+        betPanel = new JPanel();
+        betPanel.setLayout(new GridLayout(3,1));
         betPanel.setBackground(MyColors.BROWN);
         betPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 
@@ -137,8 +143,23 @@ public class GameScreen extends JFrame implements ActionListener {
         buttonPass.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
         buttonPass.addActionListener(this);
 
-        rightPanel.add(betPanel,BorderLayout.CENTER);
-        betPanel.add(playerName);
+        briscolaPanel = new JPanel();
+        briscolaPanel.setLayout(new GridLayout(2,1));
+        briscolaPanel.setBackground(MyColors.BROWN);
+        briscolaPanel.setBorder(BorderFactory.createEmptyBorder(5,0,0,0));
+        briscolaPanel.setVisible(false);
+
+        playerCaller = new JLabel();
+        playerCaller.setBackground(MyColors.BROWN);
+        playerCaller.setForeground(Color.BLACK);
+        playerCaller.setFont(new Font("Courier",Font.BOLD,14));
+
+
+        briscolaPanel.add(playerCaller);
+
+        rightPanel.add(playerName);
+        rightPanel.add(betPanel);
+       // betPanel.add(playerName);
         betPanel.add(buttonBet);
         betPanel.add(betSpinner);
         betPanel.add(buttonPass);
@@ -213,7 +234,7 @@ public class GameScreen extends JFrame implements ActionListener {
         exitButton.setVisible(false);
 
         menuZone.add(exitButton);
-
+        firstPlayer.sortHand();
         cardsContainer = new CardsGroupPanel(firstPlayer.getHand());
         cardsContainer.setBackground(MyColors.BROWN);
         cardsContainer.getPanel().setPreferredSize(new Dimension(MAX_WIDTH/2 -12,200));
@@ -298,9 +319,11 @@ public class GameScreen extends JFrame implements ActionListener {
     public void updatePlayerCards(Player player) {
         cardsContainer.update(player.getHand(), player instanceof ControlledPlayer);
 
-        if(listenerEnabled) {
+        if(player instanceof ControlledPlayer){
             setActionListener();
+            check = true;
         }
+
         if(bettingTurn) {
             if (!(player instanceof ControlledPlayer )) {
                 setBetAreaVisibility(false);
@@ -315,6 +338,10 @@ public class GameScreen extends JFrame implements ActionListener {
 
     public boolean isBetDone() {
         return !betDone;
+    }
+
+    public void enableCards(boolean bool) {
+        this.cardsContainer.enable(bool);
     }
 
     public boolean isTurnDone() {
@@ -402,10 +429,13 @@ public class GameScreen extends JFrame implements ActionListener {
             }
         }
         else if(e.getSource() instanceof ButtonCardImage) {
-            imageString = e.getActionCommand();
-            synchronized (lock) {
-                turnDone = true;
-                lock.notifyAll();
+            if(check) {
+                imageString = e.getActionCommand();
+                check = false;
+                synchronized (lock) {
+                    turnDone = true;
+                    lock.notifyAll();
+                }
             }
         }
         else if(e.getSource() == exitButton) {
@@ -449,10 +479,23 @@ public class GameScreen extends JFrame implements ActionListener {
     public void setActionListener() {
         cardsContainer.setActionListener(this);
     }
-    public void removeActionListener() {
-        cardsContainer.setActionListener(this);
-    }
     public void setBettingTurn(boolean bettingTurn) {
         this.bettingTurn = bettingTurn;
+    }
+
+    public void setCheck(boolean check) {
+        this.check = check;
+    }
+
+    public void showBriscola(Card card, String player) {
+        playerCaller.setText(player + " called:");
+        CardPanel cardPanel = new CardPanel(card.getCardImage());
+        cardPanel.setBackground(MyColors.BROWN);
+        briscolaPanel.add(cardPanel);
+        briscolaPanel.setVisible(true);
+        briscolaPanel.revalidate();
+        briscolaPanel.repaint();
+        rightPanel.remove(betPanel);
+        rightPanel.add(briscolaPanel);
     }
 }

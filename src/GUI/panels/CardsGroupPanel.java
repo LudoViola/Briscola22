@@ -58,4 +58,10 @@ public class CardsGroupPanel {
             p.setActionListener(listener);
         }
     }
+
+    public void enable(boolean bool) {
+        for (CardPanel p:cardsSlot) {
+            p.setEnabled(bool);
+        }
+    }
 }

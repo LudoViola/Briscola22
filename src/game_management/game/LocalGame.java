@@ -60,6 +60,7 @@ public class LocalGame {
     }
 
     private void bettingTurn() {
+        screen.enableCards(false);
         while (bettingPlayers.size()!=1) {
             for (Player p : bettingPlayers) {
                 int bet = 0;
@@ -170,6 +171,7 @@ public class LocalGame {
         screen.setListenerEnabled(true);
         screen.updatePlayerCards(players.get(0));
         screen.setLabelText(players.get(0));
+        screen.showBriscola(fellowCard,players.get(0).getPlayerID());
         screen.update(screen.getGraphics());
         screen.revalidate();
         screen.repaint();
@@ -202,6 +204,7 @@ public class LocalGame {
     }
 
     private void playPhase() {
+        screen.setActionListener();
         screen.addNameOnIcon(players);
         screen.setBettingTurn(false);
         int hands = 0;
@@ -229,6 +232,8 @@ public class LocalGame {
                         }
                     }
                     c = p.pickACard(screen.getImageString());
+                    screen.updatePlayerCards(p);
+                    screen.setCheck(false);
                 }
                 else if(p instanceof AIPlayer) {
                     try {

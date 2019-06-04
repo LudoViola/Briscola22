@@ -13,4 +13,5 @@ public class Message {
     public static final String MY_ICON_TURN = "my_icon_turn&";
     public static final String END_OF_GAME = "end_of_game&";
     public static final String HIGHER_BET = "higher_bet&";
+    public static final String CALLER = "caller&";
 }
