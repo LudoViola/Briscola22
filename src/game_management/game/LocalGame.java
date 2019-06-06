@@ -26,7 +26,7 @@ public class LocalGame {
     private boolean isFirst;
     private boolean isMultiplayer;
     private GameType gameType;
-    private  final int animationSpeed = 800;
+    private  final int animationSpeed = 1500;
 
     LocalGame(Object lock) {
         this.lock = lock;

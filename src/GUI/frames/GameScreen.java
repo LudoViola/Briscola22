@@ -168,7 +168,7 @@ public class GameScreen extends JFrame implements ActionListener {
         tablePanel = new JPanel();
         tablePanel.setLayout(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createEmptyBorder(40,40,40,40));
-        tablePanel.setBackground(Color.GREEN);
+        tablePanel.setBackground(MyColors.GREEN_TABLE);
 
         innerTablePanel = new JPanel();
         innerTablePanel.setBackground(Color.GREEN);
