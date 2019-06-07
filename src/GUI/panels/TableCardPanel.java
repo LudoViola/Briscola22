@@ -2,6 +2,7 @@ package GUI.panels;
 
 import GUI.buttons.ButtonCardImage;
 import card_management.Card;
+import finals.MyColors;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +17,7 @@ public class TableCardPanel {
         this.panel = new JPanel();
         cardsSlot = new ArrayList<>();
         panel.setLayout(new GridLayout(2,3));
-        panel.setBackground(Color.GREEN);
+        panel.setBackground(MyColors.GREEN_TABLE);
     }
 
     public void update() {

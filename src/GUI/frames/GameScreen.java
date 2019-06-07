@@ -126,7 +126,7 @@ public class GameScreen extends JFrame implements ActionListener {
         playerName.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
         playerName.setBackground(MyColors.BROWN);
         playerName.setForeground(Color.BLACK);
-        playerName.setFont(new Font("Courier",Font.BOLD,18));
+        playerName.setFont(MyFonts.VERDANA);
 
         buttonBet = new JButton("BET");
         buttonBet.setBackground(MyColors.BROWN);
@@ -171,7 +171,7 @@ public class GameScreen extends JFrame implements ActionListener {
         tablePanel.setBackground(MyColors.GREEN_TABLE);
 
         innerTablePanel = new JPanel();
-        innerTablePanel.setBackground(Color.GREEN);
+        innerTablePanel.setBackground(MyColors.GREEN_TABLE);
 
         innerRightPanel = new JPanel();
         innerRightPanel.setLayout(new GridLayout(2,1));

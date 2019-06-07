@@ -33,6 +33,7 @@ public class TableIconPanel extends JPanel {
         playerName = new JLabel();
         turnPointer = new JLabel("YOUR TURN");
         turnPointer.setVisible(Visibility.INVISIBLE);
+        turnPointer.setForeground(Color.GREEN);
 
         add(image,BorderLayout.CENTER);
         add(playerName,BorderLayout.PAGE_START);

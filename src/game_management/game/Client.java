@@ -36,6 +36,7 @@ public class Client {
     private ListenForMessages listenForMessages;
     private ArrayList<String> opponentsNames;
     private HandleMessages handleMessages;
+    private Socket socket;
 
     public Client() {
         resetEnvironment();
@@ -181,9 +182,11 @@ public class Client {
         System.out.println("Connection with Server lost, Game Restarting");
         loginScreen.dispose();
         if(gameRoomReady) {
+            this.screen.dispose();
+        }
+        if(handleMessages.isRunning && listenForMessages.isRunning) {
             this.listenForMessages.stop();
             this.handleMessages.stop();
-            this.screen.dispose();
         }
         resetEnvironment();
         startGame();
@@ -203,8 +206,10 @@ public class Client {
 
     private class ListenForMessages implements Runnable {
         private volatile boolean exit;
+        private boolean isRunning = false;
         @Override
         public void run() {
+            isRunning = true;
             try {
                 while (!exit) {
                     String message;
@@ -228,6 +233,7 @@ public class Client {
 
     private class HandleMessages implements Runnable {
         private volatile boolean exit;
+        private boolean isRunning = false;
 
         HandleMessages() {
             this.exit = false;
@@ -235,6 +241,7 @@ public class Client {
 
         @Override
         public void run() {
+            isRunning = true;
             while (!exit) {
                 if(!messagesQue.isEmpty()) {
                     String message = messagesQue.get(0);
@@ -337,6 +344,11 @@ public class Client {
                             break;
                         case Message.END_OF_GAME:
                             isGameEnded = true;
+                            try {
+                                sendMessage(Message.END_OF_GAME + onlinePlayer.getPlayerName());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             screen.setExitButtonVisibility(true);
                             synchronized (lock) {
                                 while (screen.isGameEnded()) {
@@ -374,7 +386,6 @@ public class Client {
     }
 
     private void login(String name,String password, String ip) throws IOException, InterruptedException {
-        Socket socket;
             ois = null;
         int port = 9876;
         socket = new Socket(ip, port);
@@ -387,7 +398,6 @@ public class Client {
             Thread.sleep(100);
         }
     private void signUp(String name,String password, String ip) throws IOException, InterruptedException {
-        Socket socket;
         ois = null;
         int port = 9876;
         socket = new Socket(ip, port);

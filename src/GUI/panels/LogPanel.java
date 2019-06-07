@@ -1,5 +1,8 @@
 package GUI.panels;
 
+import finals.MyColors;
+import finals.MyFonts;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,7 +10,7 @@ public class LogPanel extends JPanel {
 
     private JTextArea logsField;
     private JScrollBar vertical;
-    private final Font font = new Font("Courier", Font.BOLD,12);
+    private final Font font = MyFonts.COPPERPLATE_GOTHIC_BOLD;
     public LogPanel() {
         setBackground(Color.BLACK);
 
@@ -39,7 +42,7 @@ public class LogPanel extends JPanel {
             logsField.setLineWrap(true);
         logsField.setFont(font);
         logsField.setBackground(Color.BLACK);
-        logsField.setForeground(Color.GREEN);
+        logsField.setForeground(MyColors.GREEN_LOG);
             logsField.setWrapStyleWord(true);
         vertical.setValue( vertical.getMaximum() );
 

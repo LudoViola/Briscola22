@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="Briscola:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Briscola_jar</output-path>
+    <root id="archive" name="Briscola.jar">
+      <element id="module-output" name="Briscola" />
+    </root>
+  </artifact>
+</component>

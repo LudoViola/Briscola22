@@ -84,7 +84,7 @@ public class LocalGame {
                     }
                     else if(p instanceof AIPlayer) {
                         try {
-                            Thread.sleep(animationSpeed);
+                            Thread.sleep(animationSpeed/2);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -113,7 +113,7 @@ public class LocalGame {
                         bettingPlayers.remove(p);
                     }
                     try {
-                        Thread.sleep(animationSpeed);
+                        Thread.sleep(animationSpeed/2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -131,7 +131,7 @@ public class LocalGame {
         String s = ("Starting player " + startingPlayer + "with bet: " + higherBet);
         screen.diplayBettingWinner(s);
         try {
-            Thread.sleep(animationSpeed);
+            Thread.sleep(animationSpeed/2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -158,7 +158,7 @@ public class LocalGame {
         }
         else if(players.get(0) instanceof AIPlayer) {
             try {
-                Thread.sleep(animationSpeed);
+                Thread.sleep(animationSpeed/2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
