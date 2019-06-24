@@ -19,9 +19,12 @@ public class NewGameScreen implements ActionListener {
     ImagePanel backgroundPanel;
     private JButton startControlledGameButton;
     private JButton startMultiplayerGameButton;
+    private JButton startLocalGameButton;
     private JButton startPlayerVSEasyGameButton;
+    private JButton backButton;
     private JButton startSimulatedGameButton;
     JPanel buttonPanel;
+    JPanel buttonPanelLocal;
     private boolean gameChosen;
     final Object lock;
     private GameType gameType;
@@ -41,7 +44,14 @@ public class NewGameScreen implements ActionListener {
         buttonPanel.setBackground(MyColors.TRANSPARENT);
         buttonPanel.setPreferredSize(new Dimension(300,400));
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER,300,20));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(1,1,0,0));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(50,1,0,0));
+
+        buttonPanelLocal = new JPanel();
+        buttonPanelLocal.setBackground(MyColors.TRANSPARENT);
+        buttonPanelLocal.setPreferredSize(new Dimension(300,400));
+        buttonPanelLocal.setLayout(new FlowLayout(FlowLayout.CENTER,300,20));
+        buttonPanelLocal.setBorder(BorderFactory.createEmptyBorder(50,1,0,0));
+        buttonPanelLocal.setVisible(false);
 
         startControlledGameButton = new JButton("Start Controlled Game");
         startControlledGameButton.setBackground(Color.orange);
@@ -61,24 +71,40 @@ public class NewGameScreen implements ActionListener {
         startPlayerVSEasyGameButton.setBorder(new RoundedBorder(10));
         startPlayerVSEasyGameButton.addActionListener(this);
 
+        backButton = new JButton("Back");
+        backButton.setBackground(Color.orange);
+        backButton.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
+        backButton.setBorder(new RoundedBorder(10));
+        backButton.addActionListener(this);
+
         startMultiplayerGameButton = new JButton("Start Multiplayer Game");
         startMultiplayerGameButton.setBackground(Color.orange);
         startMultiplayerGameButton.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
         startMultiplayerGameButton.setBorder(new RoundedBorder(10));
         startMultiplayerGameButton.addActionListener(this);
 
-        buttonPanel.add(startSimulatedGameButton);
-        buttonPanel.add(startPlayerVSEasyGameButton);
-        buttonPanel.add(startControlledGameButton);
+        startLocalGameButton = new JButton("Start Local Game");
+        startLocalGameButton.setBackground(Color.orange);
+        startLocalGameButton.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
+        startLocalGameButton.setBorder(new RoundedBorder(10));
+        startLocalGameButton.addActionListener(this);
+
+       // buttonPanel.add(startSimulatedGameButton);
+        //buttonPanel.add(startPlayerVSEasyGameButton);
+        buttonPanel.add(startLocalGameButton);
+        //buttonPanel.add(startControlledGameButton);
         buttonPanel.add(startMultiplayerGameButton);
+
+        buttonPanelLocal.add(startPlayerVSEasyGameButton);
+        buttonPanelLocal.add(backButton);
 
 
         JLabel logo = new JLabel();
         logo.setIcon(new ImageIcon(addIcon("resources/logo.png")));
 
         backgroundPanel.add(logo);
-
         backgroundPanel.add(buttonPanel);
+        backgroundPanel.add(buttonPanelLocal);
 
         frame.add(backgroundPanel);
 
@@ -97,7 +123,19 @@ public class NewGameScreen implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == startControlledGameButton) {
+        if(e.getSource().equals(startLocalGameButton)) {
+           buttonPanel.setVisible(false);
+            buttonPanelLocal.setVisible(true);
+            this.frame.repaint();
+            this.frame.revalidate();
+        }
+        else if(e.getSource() == backButton) {
+            buttonPanel.setVisible(true);
+            buttonPanelLocal.setVisible(false);
+            this.frame.repaint();
+            this.frame.revalidate();
+        }
+        else if(e.getSource() == startControlledGameButton) {
             gameType = GameType.CONTROLLED;
             runGame();
         }

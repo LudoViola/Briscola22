@@ -61,7 +61,7 @@ public class Card implements Comparable<Card> {
 
     @Override
     public String toString() {
-        return "{" + "seme=" + seme + '}' +valore;
+        return valore + " di " + seme ;
     }
 
      @Override

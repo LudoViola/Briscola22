@@ -1,20 +1,27 @@
-package game_management.players;
+package game_management.players.ai;
 
 import card_management.Card;
 import card_management.Deck;
 import card_management.Semi;
+import game_management.players.Player;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
-public class AIPlayerEasy extends AIPlayer {
-    private Random random = new Random();
-    private Semi briscola;
-    private int[] cardsForSuit;
-    private HashMap<Semi,Integer> cardsBySuit;
-    public AIPlayerEasy(int order) {
+public abstract class AIPlayer extends Player implements AI{
+
+    protected Card tempWinningCard;
+    protected Player tempWinningPlayer;
+    Semi briscola;
+    int[] cardsForSuit;
+    HashMap<Semi,Integer> cardsBySuit;
+
+
+    AIPlayer(int order) {
         super(order);
+        tempWinningCard = null;
     }
 
     public void setCardsForSuit() {
@@ -25,23 +32,7 @@ public class AIPlayerEasy extends AIPlayer {
         }
     }
 
-    @Override
-    public int chooseBet() {
-       if(Collections.max(cardsBySuit.values()) >= 4) {
-           return 81;
-       }
-       else if(Collections.max(cardsBySuit.values()) == 3) {
-           return 71;
-       }
-       else if(Collections.max(cardsBySuit.values()) == 2) {
-           return 61;
-       }
-       else {
-           return 0;
-       }
-    }
 
-    @Override
     public Card chooseFellow() {
         Deck deck = new Deck();
         deck.getDeck().removeAll(this.hand.getCards());
@@ -52,7 +43,6 @@ public class AIPlayerEasy extends AIPlayer {
             }
             j++;
         }
-
         ArrayList<Card> cards = new ArrayList<>();
         for (Card c:deck.getDeck() ) {
             if(c.getSeme().equals(briscola)) {
@@ -63,32 +53,33 @@ public class AIPlayerEasy extends AIPlayer {
         cards.sort(Card::compareTo);
         return  cards.get(cards.size()-1);
     }
-
-    @Override
-    public Card throwCard() {
-        if(getCardToWin() !=null) {
-            return getCardToWin();
-        }else {
-            if(getLiscio()!=null) {
-                return getLiscio();
-            }
-            else {
-                return this.hand.getCards().get(random.nextInt(this.hand.getCards().size()));
-            }
-        }
-    }
-
-    private Card getLiscio() {
+     Card giveLiscio() {
         Card card = null;
         for (Card c:this.hand.getCards()) {
-           if(c.getPoints()==0 && c.getSeme()!=briscola) {
-               card = c;
-           }
+            if(c.getPoints()==0 && c.getSeme()!=briscola) {
+                card = c;
+            }
+        }
+        if(card == null) {
+            card = giveRandomCard();
         }
         return card;
     }
 
-    private Card getCardToWin() {
+     Card giveCarico() {
+        Card card = null;
+        for (Card c:this.hand.getCards()) {
+            if((c.getPoints()==10 || c.getPoints()==11) && c.getSeme()!=briscola) {
+                card = c;
+            }
+        }
+        if(card == null) {
+            card = giveRandomCard();
+        }
+        return card;
+    }
+
+     Card getCardToWin() {
         Card d = null;
         if(tempWinningCard!=null) {
             for (Card c : this.hand.getCards()) {
@@ -105,10 +96,30 @@ public class AIPlayerEasy extends AIPlayer {
                     }
                 }
             }
+
+            if(d == null) {
+                d = giveLiscio();
+            }
+
             return d;
         }
         else {
-            return null;
+            return giveLiscio();
         }
     }
+
+    private Card giveRandomCard() {
+        Random random = new Random();
+        return this.hand.getCards().get(random.nextInt(this.hand.getCards().size()));
+    }
+
+    public void setTempWinningCard(Card tempWinningCard) {
+        this.tempWinningCard = tempWinningCard;
+    }
+
+    public void setTempWinningPlayer(Player tempWinningPlayer) {
+        this.tempWinningPlayer = tempWinningPlayer;
+    }
+
 }
+

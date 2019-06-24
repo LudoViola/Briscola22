@@ -12,6 +12,7 @@ public class Table {
     private Card winningCard;
     private Semi briscola;
     private Hand hand;
+    private Player tempWinningPlayer;
 
     public Table(Semi briscola) {
         this.startingPlayer=0;
@@ -47,6 +48,7 @@ public class Table {
         winner = player.getPlayerID();
         winningCard = card;
         startingPlayer = player.getOrder();
+        tempWinningPlayer = player;
     }
 
     public ArrayList<Card> getCards() {
@@ -67,5 +69,9 @@ public class Table {
 
     public Card getWinningCard() {
         return winningCard;
+    }
+
+    public Player getTempWinningPlayer() {
+        return tempWinningPlayer;
     }
 }

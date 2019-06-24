@@ -38,14 +38,13 @@ public class LogPanel extends JPanel {
 
     public void update(String s) {
         String text = logsField.getText() + "\n";
-            logsField.setText(text + s);
-            logsField.setLineWrap(true);
+        logsField.setText(text + s);
+        logsField.setLineWrap(true);
         logsField.setFont(font);
         logsField.setBackground(Color.BLACK);
         logsField.setForeground(MyColors.GREEN_LOG);
-            logsField.setWrapStyleWord(true);
+        logsField.setWrapStyleWord(true);
         vertical.setValue( vertical.getMaximum() );
-
-        }
-
     }
+
+}

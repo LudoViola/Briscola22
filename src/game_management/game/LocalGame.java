@@ -6,6 +6,9 @@ import GUI.frames.NewGameScreen;
 import card_management.*;
 import finals.Visibility;
 import game_management.players.*;
+import game_management.players.ai.AIPlayer;
+import game_management.players.ai.AIPlayerEasy;
+import game_management.players.ai.AIPlayerRandom;
 
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -65,8 +68,8 @@ public class LocalGame {
             for (Player p : bettingPlayers) {
                 int bet = 0;
                 p.sortHand();
-                if(p instanceof AIPlayerEasy) {
-                    ((AIPlayerEasy) p).setCardsForSuit();
+                if(p instanceof AIPlayer) {
+                    ((AIPlayer) p).setCardsForSuit();
                 }
                 switchScreen(p);
                 if (!(bettingPlayers.contains(p) && bettingPlayers.size() == 1)) {
@@ -129,6 +132,7 @@ public class LocalGame {
             startGame();
         }
         String s = ("Starting player " + startingPlayer + "with bet: " + higherBet);
+
         screen.diplayBettingWinner(s);
         try {
             Thread.sleep(animationSpeed/2);
@@ -244,6 +248,9 @@ public class LocalGame {
                     AIPlayer player = (AIPlayer) p;
                     if(winningCard!=null) {
                         player.setTempWinningCard(winningCard);
+                    }
+                    if(table.getTempWinningPlayer()!=null) {
+                        ((AIPlayer) p).setTempWinningPlayer(table.getTempWinningPlayer());
                     }
                     c = player.throwCard();
                     player.getHand().chooseCard(c);

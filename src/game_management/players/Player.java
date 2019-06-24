@@ -6,16 +6,16 @@ import card_management.Hand;
 import java.util.ArrayList;
 
 public abstract class Player implements Comparable<Player> {
-     int order;
-     Hand hand;
-     ArrayList<Card> wonCards;
+      private int order;
+     protected Hand hand;
+    ArrayList<Card> wonCards;
      int score;
-     int currentBet;
-     String playerID;
-     private boolean flag = true;
-     PlayerRole role;
+     private int currentBet;
+     private String playerID;
+    private boolean flag = true;
+     protected PlayerRole role;
 
-    public Player() {
+     Player() {
     }
 
     public Player(int order) {

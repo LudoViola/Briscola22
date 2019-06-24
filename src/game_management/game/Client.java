@@ -12,7 +12,6 @@ import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -31,12 +30,11 @@ public class Client {
     private GameStatus gameStatus;
     private OnlineGameScreen screen;
     private UserLoginScreen loginScreen;
-    private boolean check22;
+    private boolean isBettingEnded;
     private boolean isGameEnded;
     private ListenForMessages listenForMessages;
     private ArrayList<String> opponentsNames;
     private HandleMessages handleMessages;
-    private Socket socket;
 
     public Client() {
         resetEnvironment();
@@ -50,6 +48,100 @@ public class Client {
     }
 
     private void runMultiplayerGame() {
+            try {
+                setup();
+                bet();
+                chooseFellow();
+                play();
+            } catch (IOException | InterruptedException e) {
+                if (e.getMessage().equals("Connection reset")) {
+                    resetGame();
+                } else {
+                    e.printStackTrace();
+                }
+            }
+    }
+
+    private void play() throws InterruptedException, IOException {
+        while (!isGameEnded) {
+            synchronized (lock1) {
+                while (!gameStatus.equals(GameStatus.MY_TURN)) {
+                    lock1.wait();
+                }
+            }
+            screen.setCardsEnabled(true);
+            screen.setActionListener();
+            synchronized (lock) {
+                while (screen.isTurnDone()) {
+                    lock.wait();
+                }
+            }
+            sendMessage(Message.YOUR_TURN + onlinePlayer.pickACard(screen.getImageString()).getCardId());
+            screen.updatePlayerCards(onlinePlayer);
+            screen.setTurnDone(false);
+            screen.setCardsEnabled(false);
+            gameStatus = GameStatus.WAIT;
+        }
+    }
+
+    private void chooseFellow() throws InterruptedException, IOException {
+        synchronized (lock1) {
+            while (gameStatus.equals(GameStatus.WAIT)) {
+                lock1.wait();
+            }
+        }
+        if (gameStatus.equals(GameStatus.CHOOSE_FELLOW)) {
+            screen.setVisible(false);
+            ChoseFellowScreen choseFellowScreen = new ChoseFellowScreen(onlinePlayer, lock);
+            choseFellowScreen.setVisible(true);
+            synchronized (lock) {
+                while (choseFellowScreen.isFellowChosen()) {
+                    lock.wait();
+                }
+            }
+            String cardChosen = Message.CHOOSE_YOUR_FELLOW + choseFellowScreen.getCardChosen().getCardId();
+            sendMessage(cardChosen);
+            screen.setVisible(true);
+        }
+        screen.addNameOnIcons(opponentsNames);
+        screen.setTableVisibility(true);
+        screen.update(screen.getGraphics());
+        screen.revalidate();
+
+        screen.repaint();
+    }
+
+    private void bet() throws InterruptedException, IOException {
+        while (!isBettingEnded) {
+            synchronized (lock1) {
+                while (gameStatus.equals(GameStatus.WAIT)) {
+                    lock1.wait();
+                }
+            }
+            if (gameStatus.equals(GameStatus.BETTING)) {
+                screen.setBetAreaVisibility(true);
+                synchronized (lock) {
+                    while (screen.isBetDone()) {
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                screen.setBetDone(false);
+                String bet = Message.SENDING_BET + screen.getBet();
+                screen.setBetAreaVisibility(false);
+                sendMessage(bet);
+                gameStatus = GameStatus.WAIT;
+            } else if (gameStatus.equals(GameStatus.RUNNING)) {
+                isBettingEnded = true;
+                gameStatus = GameStatus.WAIT;
+            }
+        }
+    }
+
+    private void setup() throws IOException, InterruptedException {
         loginScreen = new UserLoginScreen(lock);
         loginScreen.getFrame().setVisible(true);
         synchronized (lock) {
@@ -61,121 +153,37 @@ public class Client {
                 }
             }
         }
-        String name = loginScreen.getUsername();
-        String password = loginScreen.getPassword();
         loginScreen.setLoginPanelVisibility(false);
+        if(loginScreen.isSigningUp()) {
+            signUp(loginScreen.getUsername(), loginScreen.getPassword(), loginScreen.getIp());
+        }
+        else {
+            login(loginScreen.getUsername(), loginScreen.getPassword(), loginScreen.getIp());
+        }
+        listenForMessages = new ListenForMessages();
+        Thread thread = new Thread(listenForMessages);
+        thread.start();
+        handleMessages = new HandleMessages();
+        Thread thread1 = new Thread(handleMessages);
+        thread1.start();
 
-            try {
-                if(loginScreen.isSigningUp()) {
-                    signUp(loginScreen.getUsername(), loginScreen.getPassword(), loginScreen.getIp());
-                }
-                else {
-                    login(loginScreen.getUsername(), loginScreen.getPassword(), loginScreen.getIp());
-                }
-                listenForMessages = new ListenForMessages();
-                Thread thread = new Thread(listenForMessages);
-                thread.start();
-                handleMessages = new HandleMessages();
-                Thread thread1 = new Thread(handleMessages);
-                thread1.start();
-
-                onlinePlayer = new OnlinePlayer(name);
-                synchronized (lock1) {
-                    while (gameStatus != GameStatus.SETUP) {
-                        lock1.wait();
-                    }
-                }
-                onlinePlayer.sortHand();
-                System.out.println(onlinePlayer);
-                loginScreen.dispose();
-                screen = new OnlineGameScreen(onlinePlayer, lock);
-                screen.pack();
-                screen.setLocationRelativeTo(null);
-                screen.setVisible(true);
-                screen.setGameType(GameType.ONLINE);
-                screen.setTurnDone(false);
-                // waitForMessage();
-                check22 = false;
-                while (!check22) {
-                    synchronized (lock1) {
-                        while (gameStatus.equals(GameStatus.WAIT)) {
-                            lock1.wait();
-                        }
-                    }
-                    if (gameStatus.equals(GameStatus.BETTING)) {
-                        screen.setBetAreaVisibility(true);
-                        synchronized (lock) {
-                            while (screen.isBetDone()) {
-                                try {
-                                    lock.wait();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                        screen.setBetDone(false);
-                        String bet = Message.SENDING_BET + screen.getBet();
-                        screen.setBetAreaVisibility(false);
-                        sendMessage(bet);
-                        gameStatus = GameStatus.WAIT;
-                    } else if (gameStatus.equals(GameStatus.RUNNING)) {
-                        check22 = true;
-                        System.out.println("hrrh");
-                        gameStatus = GameStatus.WAIT;
-                    }
-                }
-                synchronized (lock1) {
-                    while (gameStatus.equals(GameStatus.WAIT)) {
-                        lock1.wait();
-                    }
-                }
-                if (gameStatus.equals(GameStatus.CHOOSE_FELLOW)) {
-                    screen.setVisible(false);
-                    ChoseFellowScreen choseFellowScreen = new ChoseFellowScreen(onlinePlayer, lock);
-                    choseFellowScreen.setVisible(true);
-                    synchronized (lock) {
-                        while (choseFellowScreen.isFellowChosen()) {
-                            lock.wait();
-                        }
-                    }
-                    String cardChosen = Message.CHOOSE_YOUR_FELLOW + choseFellowScreen.getCardChosen().getCardId();
-                    sendMessage(cardChosen);
-                    screen.setVisible(true);
-                }
-                screen.addNameOnIcons(opponentsNames);
-                screen.setTableVisibility(true);
-                screen.update(screen.getGraphics());
-                screen.revalidate();
-                screen.repaint();
-
-                while (!isGameEnded) {
-                    synchronized (lock1) {
-                        while (!gameStatus.equals(GameStatus.MY_TURN)) {
-                            lock1.wait();
-                        }
-                    }
-                    screen.setCardsEnabled(true);
-                    screen.setActionListener();
-                    synchronized (lock) {
-                        while (screen.isTurnDone()) {
-                            lock.wait();
-                        }
-                    }
-                    sendMessage(Message.YOUR_TURN + onlinePlayer.pickACard(screen.getImageString()).getCardId());
-                    screen.updatePlayerCards(onlinePlayer);
-                    screen.setTurnDone(false);
-                    screen.setCardsEnabled(false);
-                    gameStatus = GameStatus.WAIT;
-                }
-
-
-            } catch (IOException | InterruptedException e) {
-                if (e.getMessage().equals("Connection reset")) {
-                    resetGame();
-                } else {
-                    e.printStackTrace();
-                }
+        onlinePlayer = new OnlinePlayer(loginScreen.getUsername());
+        synchronized (lock1) {
+            while (gameStatus != GameStatus.SETUP) {
+                lock1.wait();
             }
+        }
+        onlinePlayer.sortHand();
+        System.out.println(onlinePlayer);
+        loginScreen.dispose();
+        screen = new OnlineGameScreen(onlinePlayer, lock);
+        screen.pack();
+        screen.setLocationRelativeTo(null);
+        screen.setVisible(true);
+        screen.setGameType(GameType.ONLINE);
+        screen.setTurnDone(false);
+        // waitForMessage();
+        isBettingEnded = false;
     }
 
     private void resetGame() {
@@ -268,7 +276,7 @@ public class Client {
                             resetGame();
                             break;
                         case Message.NO_BET:
-                            check22 = true;
+                            isBettingEnded = true;
                             gameStatus = GameStatus.RUNNING;
                             synchronized (lock1) {
                                 lock1.notifyAll();
@@ -386,28 +394,25 @@ public class Client {
     }
 
     private void login(String name,String password, String ip) throws IOException, InterruptedException {
-            ois = null;
-        int port = 9876;
-        socket = new Socket(ip, port);
-        oos = new ObjectOutputStream(socket.getOutputStream());
-        ois = new ObjectInputStream(socket.getInputStream());
-        System.out.println("Sending request to Socket Server");
+        createSocket(ip);
         String s = Message.LOGIN + name + "&" + password;
-        //write to socket using ObjectOutputStream
             sendMessage(s);
             Thread.sleep(100);
         }
     private void signUp(String name,String password, String ip) throws IOException, InterruptedException {
+        createSocket(ip);
+        String s = Message.SIGN_UP + name + "&" + password;
+        sendMessage(s);
+        Thread.sleep(100);
+    }
+
+    private void createSocket(String ip) throws IOException {
         ois = null;
         int port = 9876;
-        socket = new Socket(ip, port);
+        Socket socket = new Socket(ip, port);
         oos = new ObjectOutputStream(socket.getOutputStream());
         ois = new ObjectInputStream(socket.getInputStream());
         System.out.println("Sending request to Socket Server");
-        String s = Message.SIGN_UP + name + "&" + password;
-        //write to socket using ObjectOutputStream
-        sendMessage(s);
-        Thread.sleep(100);
     }
 
     private void sendMessage(String name) throws IOException {

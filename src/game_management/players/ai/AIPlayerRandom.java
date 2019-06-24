@@ -1,4 +1,4 @@
-package game_management.players;
+package game_management.players.ai;
 
 import card_management.Card;
 import card_management.Deck;
