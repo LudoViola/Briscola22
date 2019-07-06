@@ -17,8 +17,8 @@ import java.util.ArrayList;
 
 public class Client {
     private ArrayList<String> messagesQue;
-    private final  Object lock = new Object();
-    private final  Object lock1 = new Object();
+    private final  Object screenLock = new Object();
+    private final  Object remoteLock = new Object();
     private LocalGame game;
     private  ObjectInputStream ois;
     private ObjectOutputStream oos;
@@ -64,16 +64,16 @@ public class Client {
 
     private void play() throws InterruptedException, IOException {
         while (!isGameEnded) {
-            synchronized (lock1) {
+            synchronized (remoteLock) {
                 while (!gameStatus.equals(GameStatus.MY_TURN)) {
-                    lock1.wait();
+                    remoteLock.wait();
                 }
             }
             screen.setCardsEnabled(true);
             screen.setActionListener();
-            synchronized (lock) {
+            synchronized (screenLock) {
                 while (screen.isTurnDone()) {
-                    lock.wait();
+                    screenLock.wait();
                 }
             }
             sendMessage(Message.YOUR_TURN + onlinePlayer.pickACard(screen.getImageString()).getCardId());
@@ -85,18 +85,18 @@ public class Client {
     }
 
     private void chooseFellow() throws InterruptedException, IOException {
-        synchronized (lock1) {
+        synchronized (remoteLock) {
             while (gameStatus.equals(GameStatus.WAIT)) {
-                lock1.wait();
+                remoteLock.wait();
             }
         }
         if (gameStatus.equals(GameStatus.CHOOSE_FELLOW)) {
             screen.setVisible(false);
-            ChoseFellowScreen choseFellowScreen = new ChoseFellowScreen(onlinePlayer, lock);
+            ChoseFellowScreen choseFellowScreen = new ChoseFellowScreen(onlinePlayer, screenLock);
             choseFellowScreen.setVisible(true);
-            synchronized (lock) {
+            synchronized (screenLock) {
                 while (choseFellowScreen.isFellowChosen()) {
-                    lock.wait();
+                    screenLock.wait();
                 }
             }
             String cardChosen = Message.CHOOSE_YOUR_FELLOW + choseFellowScreen.getCardChosen().getCardId();
@@ -113,17 +113,17 @@ public class Client {
 
     private void bet() throws InterruptedException, IOException {
         while (!isBettingEnded) {
-            synchronized (lock1) {
+            synchronized (remoteLock) {
                 while (gameStatus.equals(GameStatus.WAIT)) {
-                    lock1.wait();
+                    remoteLock.wait();
                 }
             }
             if (gameStatus.equals(GameStatus.BETTING)) {
                 screen.setBetAreaVisibility(true);
-                synchronized (lock) {
+                synchronized (screenLock) {
                     while (screen.isBetDone()) {
                         try {
-                            lock.wait();
+                            screenLock.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -142,12 +142,12 @@ public class Client {
     }
 
     private void setup() throws IOException, InterruptedException {
-        loginScreen = new UserLoginScreen(lock);
+        loginScreen = new UserLoginScreen(screenLock);
         loginScreen.getFrame().setVisible(true);
-        synchronized (lock) {
+        synchronized (screenLock) {
             while (!loginScreen.isLogged()) {
                 try {
-                    lock.wait();
+                    screenLock.wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -168,15 +168,15 @@ public class Client {
         thread1.start();
 
         onlinePlayer = new OnlinePlayer(loginScreen.getUsername());
-        synchronized (lock1) {
+        synchronized (remoteLock) {
             while (gameStatus != GameStatus.SETUP) {
-                lock1.wait();
+                remoteLock.wait();
             }
         }
         onlinePlayer.sortHand();
         System.out.println(onlinePlayer);
         loginScreen.dispose();
-        screen = new OnlineGameScreen(onlinePlayer, lock);
+        screen = new OnlineGameScreen(onlinePlayer, screenLock);
         screen.pack();
         screen.setLocationRelativeTo(null);
         screen.setVisible(true);
@@ -203,7 +203,7 @@ public class Client {
     private void resetEnvironment() {
         messagesQue = new ArrayList<>();
         opponentsNames = new ArrayList<>();
-        game = new LocalGame(lock);
+        game = new LocalGame(screenLock);
         gameRoomReady = false;
         isGameEnded = false;
         isIconVisible = false;
@@ -278,14 +278,14 @@ public class Client {
                         case Message.NO_BET:
                             isBettingEnded = true;
                             gameStatus = GameStatus.RUNNING;
-                            synchronized (lock1) {
-                                lock1.notifyAll();
+                            synchronized (remoteLock) {
+                                remoteLock.notifyAll();
                             }
                             break;
                         case Message.CHOOSE_YOUR_FELLOW:
                             gameStatus = GameStatus.CHOOSE_FELLOW;
-                            synchronized (lock1) {
-                                lock1.notifyAll();
+                            synchronized (remoteLock) {
+                                remoteLock.notifyAll();
                             }
                             break;
                         case Message.SENDING_CARD:
@@ -294,15 +294,15 @@ public class Client {
                             counter++;
                             if (counter == 8) {
                                 gameStatus = GameStatus.SETUP;
-                                synchronized (lock1) {
-                                    lock1.notifyAll();
+                                synchronized (remoteLock) {
+                                    remoteLock.notifyAll();
                                 }
                             }
                             break;
                         case Message.YOUR_BETTING_TURN:
                             gameStatus = GameStatus.BETTING;
-                            synchronized (lock1) {
-                                lock1.notifyAll();
+                            synchronized (remoteLock) {
+                                remoteLock.notifyAll();
                             }
                             break;
                         case Message.SENDING_NAME:
@@ -332,8 +332,8 @@ public class Client {
                             break;
                         case  Message.YOUR_TURN:
                             gameStatus = GameStatus.MY_TURN;
-                            synchronized (lock1) {
-                                lock1.notifyAll();
+                            synchronized (remoteLock) {
+                                remoteLock.notifyAll();
                             }
                             break;
                         case Message.MY_ICON_TURN:
@@ -358,10 +358,10 @@ public class Client {
                                 e.printStackTrace();
                             }
                             screen.setExitButtonVisibility(true);
-                            synchronized (lock) {
+                            synchronized (screenLock) {
                                 while (screen.isGameEnded()) {
                                     try {
-                                        lock.wait();
+                                        screenLock.wait();
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
@@ -415,9 +415,9 @@ public class Client {
         System.out.println("Sending request to Socket Server");
     }
 
-    private void sendMessage(String name) throws IOException {
+    private void sendMessage(String message) throws IOException {
         System.out.println("Sending request to Socket Server");
-        System.out.println(name);
-        oos.writeObject(name);
+        System.out.println(message);
+        oos.writeObject(message);
     }
 }

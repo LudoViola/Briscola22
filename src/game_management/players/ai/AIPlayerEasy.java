@@ -52,8 +52,4 @@ public class AIPlayerEasy extends AIPlayer {
     private boolean isFellowWinning() {
         return tempWinningPlayer.getRole().equals(PlayerRole.CALLER) && tempWinningCard.getSeme().equals(briscola);
     }
-
-
-
-
 }
