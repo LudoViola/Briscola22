@@ -91,10 +91,10 @@ public class LocalGame {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        AIPlayer playerRandom = (AIPlayer) p;
-                        int temp = playerRandom.chooseBet();
+                        AIPlayer aiPlayer = (AIPlayer) p;
+                        int temp = aiPlayer.chooseBet();
                         while (!(temp<121 && temp> higherBet || temp == 0)) {
-                            temp = playerRandom.chooseBet();
+                            temp = aiPlayer.chooseBet();
                             if(p instanceof AIPlayerEasy) {
                                 temp = 0;
                             }

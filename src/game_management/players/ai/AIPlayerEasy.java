@@ -4,6 +4,7 @@ import card_management.Card;
 import game_management.players.PlayerRole;
 
 import java.util.Collections;
+import java.util.Random;
 
 public class AIPlayerEasy extends AIPlayer {
 
@@ -13,18 +14,38 @@ public class AIPlayerEasy extends AIPlayer {
 
     @Override
     public int chooseBet() {
-       if(Collections.max(cardsBySuit.values()) >= 4) {
-           return 81;
+        Random random = new Random();
+        int min = 61; // numero minimo
+        int max;
+       if(Collections.max(cardsBySuit.values()) == 4) {
+           max = 81;
+       }
+       else if(Collections.max(cardsBySuit.values()) >= 5) {
+           max = 91;
        }
        else if(Collections.max(cardsBySuit.values()) == 3) {
-           return 71;
+           max = 71;
        }
        else if(Collections.max(cardsBySuit.values()) == 2) {
-           return 61;
+           max = 61;
        }
        else {
-           return 0;
+           max = 0;
        }
+        if(max==0) {
+            return max;
+        }else {
+            int c = ((max-min) + 1);
+            int d;
+            if(max<=81) {
+                while (((d = (random.nextInt(c) + min)) % 2 == 0)) {
+                    c = ((max - min) + 1);
+                }
+            }else {
+                d = (random.nextInt(c) + min);
+            }
+            return d;
+        }
     }
 
 
