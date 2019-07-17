@@ -457,7 +457,7 @@ public class GameScreen extends JFrame implements ActionListener {
     }
 
     public void setLabelText(Player p) {
-        playerName.setText(p.getClass().getSimpleName()+"  " + p.getOrder());
+        playerName.setText(p.getPlayerID());
     }
 
     public void setBetAreaVisibility(boolean b) {

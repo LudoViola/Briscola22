@@ -10,8 +10,7 @@ public abstract class Player implements Comparable<Player> {
      protected Hand hand;
     ArrayList<Card> wonCards;
      int score;
-     private int currentBet;
-     private String playerID;
+     String playerID;
     private boolean flag = true;
      protected PlayerRole role;
 
@@ -23,7 +22,7 @@ public abstract class Player implements Comparable<Player> {
         this.wonCards = new ArrayList<>();
         this.hand = new Hand();
         this.score = 0;
-        playerID = getClass().getSimpleName() + " " + order;
+        playerID = "Player " + order;
     }
 
     public Card pickACard(String string) {
@@ -65,7 +64,6 @@ public abstract class Player implements Comparable<Player> {
     }
 
     public void setCurrentBet(int currentBet) {
-        this.currentBet = currentBet;
     }
 
     public void setRole(PlayerRole role) {

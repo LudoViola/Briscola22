@@ -144,8 +144,8 @@ public class LocalGame {
     private void chooseFellow() {
         gameOrder(players,startingPlayer);
         ChoseFellowScreen screen1 = new ChoseFellowScreen(players.get(0),lock);
-        screen1.setVisible(true);
         if(players.get(0) instanceof ControlledPlayer) {
+            screen1.setVisible(true);
             synchronized (lock) {
                 while (screen1.isFellowChosen()) {
                     try {
