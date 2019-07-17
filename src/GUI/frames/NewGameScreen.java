@@ -30,6 +30,7 @@ public class NewGameScreen implements ActionListener {
     private GameType gameType;
 
     public NewGameScreen(Object lock) {
+        frame.setResizable(false);
         frame.setTitle("Briscola chiamata");
         frame.setSize(1000,1200);
         frame.setResizable(true);
