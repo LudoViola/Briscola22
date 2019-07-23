@@ -1,11 +1,10 @@
 package game_management.players;
 
-import card_management.Card;
 import card_management.Hand;
 
 import java.util.ArrayList;
 
-public class OnlinePlayer extends Player{
+public class OnlinePlayer extends Player {
     private String playerName;
 
     public OnlinePlayer(String playerName) {

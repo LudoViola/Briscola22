@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
-public abstract class AIPlayer extends Player implements AI{
+public abstract class AIPlayer extends Player implements AI {
 
     protected Card tempWinningCard;
     protected Player tempWinningPlayer;
@@ -27,7 +27,7 @@ public abstract class AIPlayer extends Player implements AI{
     public void setCardsForSuit() {
         this.cardsForSuit = this.hand.getCardsForSuit();
         this.cardsBySuit = new HashMap<>();
-        for (Semi s:Semi.values()) {
+        for (Semi s: Semi.values()) {
             cardsBySuit.put(s,cardsForSuit[s.ordinal()]);
         }
     }

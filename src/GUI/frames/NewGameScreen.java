@@ -20,6 +20,7 @@ public class NewGameScreen implements ActionListener {
     private JButton startControlledGameButton;
     private JButton startMultiplayerGameButton;
     private JButton startLocalGameButton;
+    private JButton helpButton;
     private JButton startPlayerVSEasyGameButton;
     private JButton backButton;
     private JButton startSimulatedGameButton;
@@ -55,46 +56,29 @@ public class NewGameScreen implements ActionListener {
         buttonPanelLocal.setVisible(false);
 
         startControlledGameButton = new JButton("Start Controlled Game");
-        startControlledGameButton.setBackground(Color.orange);
-        startControlledGameButton.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
-        startControlledGameButton.setBorder(new RoundedBorder(10));
-        startControlledGameButton.addActionListener(this);
+        setButton(startControlledGameButton);
 
         startSimulatedGameButton = new JButton("Start Simulated Game");
-        startSimulatedGameButton.setBackground(Color.orange);
-        startSimulatedGameButton.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
-        startSimulatedGameButton.setBorder(new RoundedBorder(10));
-        startSimulatedGameButton.addActionListener(this);
+        setButton(startSimulatedGameButton);
 
         startPlayerVSEasyGameButton = new JButton("Start Easy");
-        startPlayerVSEasyGameButton.setBackground(Color.orange);
-        startPlayerVSEasyGameButton.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
-        startPlayerVSEasyGameButton.setBorder(new RoundedBorder(10));
-        startPlayerVSEasyGameButton.addActionListener(this);
+        setButton(startPlayerVSEasyGameButton);
 
         backButton = new JButton("Back");
-        backButton.setBackground(Color.orange);
-        backButton.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
-        backButton.setBorder(new RoundedBorder(10));
-        backButton.addActionListener(this);
+        setButton(backButton);
 
         startMultiplayerGameButton = new JButton("Start Multiplayer Game");
-        startMultiplayerGameButton.setBackground(Color.orange);
-        startMultiplayerGameButton.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
-        startMultiplayerGameButton.setBorder(new RoundedBorder(10));
-        startMultiplayerGameButton.addActionListener(this);
+        setButton(startMultiplayerGameButton);
 
         startLocalGameButton = new JButton("Start Local Game");
-        startLocalGameButton.setBackground(Color.orange);
-        startLocalGameButton.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
-        startLocalGameButton.setBorder(new RoundedBorder(10));
-        startLocalGameButton.addActionListener(this);
+        setButton(startLocalGameButton);
 
-       // buttonPanel.add(startSimulatedGameButton);
-        //buttonPanel.add(startPlayerVSEasyGameButton);
+        helpButton = new JButton("Help");
+        setButton(helpButton);
+
         buttonPanel.add(startLocalGameButton);
-        //buttonPanel.add(startControlledGameButton);
         buttonPanel.add(startMultiplayerGameButton);
+        buttonPanel.add(helpButton);
 
         buttonPanelLocal.add(startPlayerVSEasyGameButton);
         buttonPanelLocal.add(backButton);
@@ -152,6 +136,23 @@ public class NewGameScreen implements ActionListener {
             gameType = GameType.MULTIPLAYER;
             runGame();
         }
+        else if(e.getSource().equals(helpButton)) {
+            try {
+                openRules();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this.frame,"No internet Connection", "Can't Help you",JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void openRules() throws IOException {
+        JEditorPane website = new JEditorPane("http://briscola.altervista.org/nuovosito/regolamento.htm");
+        website.setEditable(false);
+        JFrame frame = new JFrame("Rules");
+        frame.add(new JScrollPane(website));
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(800, 600);
+        frame.setVisible(true);
     }
 
     private void runGame() {
@@ -178,6 +179,13 @@ public class NewGameScreen implements ActionListener {
             e.printStackTrace();
         }
         return body;
+    }
+
+    private void setButton(JButton button)  {
+        button.setBackground(Color.orange);
+        button.setBorder(BorderFactory.createEmptyBorder(5,1,5,0));
+        button.setBorder(new RoundedBorder(10));
+        button.addActionListener(this);
     }
 
     public JFrame getFrame() {

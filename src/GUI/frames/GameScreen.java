@@ -276,9 +276,10 @@ public class GameScreen extends JFrame implements ActionListener {
         //JOptionPane.showMessageDialog(this,s,"The Winner", JOptionPane.INFORMATION_MESSAGE);
     }
     public void diplayScoreBoard( String s) {
-        String c = "Classifica\n" + s;
+        String c = "Board\n" + s;
+        c+="\nPoints to win: " + higherBet;
         //JOptionPane.showMessageDialog(this,s,"Classifica", JOptionPane.INFORMATION_MESSAGE);
-        logPanel.update(c);
+        displayBoard(c);
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
@@ -293,9 +294,12 @@ public class GameScreen extends JFrame implements ActionListener {
             e.printStackTrace();
         }
         String s = "Hand Winner:" + p.getPlayerID();
-       // JOptionPane.showMessageDialog(this,s,"Hand Winner", JOptionPane.INFORMATION_MESSAGE);
         logPanel.update(s);
         tableCards.update();
+    }
+
+    private void displayBoard(String s) {
+        JOptionPane.showMessageDialog(this,s,"Board", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void displayBettingMove(Player p,int bet) {

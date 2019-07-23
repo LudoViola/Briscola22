@@ -5,7 +5,9 @@ import GUI.frames.GameScreen;
 import GUI.frames.NewGameScreen;
 import card_management.*;
 import finals.Visibility;
-import game_management.players.*;
+import game_management.players.ControlledPlayer;
+import game_management.players.Player;
+import game_management.players.PlayerRole;
 import game_management.players.ai.AIPlayer;
 import game_management.players.ai.AIPlayerEasy;
 import game_management.players.ai.AIPlayerRandom;
@@ -309,7 +311,7 @@ public class LocalGame {
                 }
             }
             this.gameType = screen.getGameType();
-            if(gameType!=GameType.MULTIPLAYER) {
+            if(gameType!= GameType.MULTIPLAYER) {
                 resetGameEnvironment();
                 this.screen.setVisible(true);
                 startGame();
